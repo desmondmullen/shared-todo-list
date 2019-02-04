@@ -1,15 +1,14 @@
 $(document).ready(function () {
     //#region - initialize firebase and variables
     var config = {
-        apiKey: "AIzaSyC3DrasuTKwDHLaaqV_hdlVnnLDqdTY1gE",
-        authDomain: "dsm-simple-messaging.firebaseapp.com",
-        databaseURL: "https://dsm-simple-messaging.firebaseio.com",
-        projectId: "dsm-simple-messaging",
-        storageBucket: "dsm-simple-messaging.appspot.com",
-        messagingSenderId: "634303355719"
+        apiKey: "AIzaSyBKI_aJkYYr8ikLjgxQa_BCUh2gKCIl-98",
+        authDomain: "dsm-shared-todo-list.firebaseapp.com",
+        databaseURL: "https://dsm-shared-todo-list.firebaseio.com",
+        projectId: "dsm-shared-todo-list",
+        storageBucket: "",
+        messagingSenderId: "288534093673"
     };
     firebase.initializeApp(config);
-
     var database = firebase.database();
     var userID;
     var userName;
@@ -18,13 +17,14 @@ $(document).ready(function () {
     var userMessagesPath;
     var userTodosPath;
     var theLastMessage;
+    var theLastTodo;
     var geolocationListField = $("#geolocation-list");
     var geolocationStatusField = $("#geolocation-status");
     var map;
     //#endregion
 
     //#region - buttons
-    $(".add-entry").on("click", function (event) {
+    $("#add-entry").on("click", function (event) {
         event.preventDefault();
         doAddEntry();
     });
@@ -49,6 +49,14 @@ $(document).ready(function () {
     //#endregion
 
     //#region - functions
+    function retrieveBackups() {
+        // database.ref(userTodosPath).on("value", function (snapshot) {
+        database.ref(userBackupsPath).once("value", function (snapshot) {
+            let theEntriesBackup = snapshot.child(userMessagesPath + "/entriesFieldContents/").val();
+            let theTodosBackup = snapshot.child(userMessagesPath + "/userName/").val();
+        });
+    }
+
     function doAddEntry(automatic) {
         let todaysDate = new Date().toLocaleDateString("en-US");
         let currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -74,10 +82,18 @@ $(document).ready(function () {
         $("#input-message").val("");
     };
 
+    function writeEntriesFieldBackup() {
+        console.log("write entries field backup");
+        var theEntriesFieldContents = $("#message-display").html();
+        database.ref(userBackupsPath).update({
+            entriesFieldContents: theEntriesFieldContents,
+        });
+    };
+
     function doAddTodo() {
         let todaysDate = new Date().toLocaleDateString("en-US");
         let currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        console.log("do add todo:" + automatic + ", userID is: " + userID);
+        console.log("do add todo. userID is: " + userID);
         var todoMessage = $("#input-message").val().trim() + "<br>";
         database.ref(userTodosPath).set({
             dateTime: todaysDate + " " + currentTime,
@@ -85,6 +101,14 @@ $(document).ready(function () {
             todo: todoMessage,
         });
         $("#input-message").val("");
+    };
+
+    function writeTodosFieldBackup() {
+        console.log("write todos field backup");
+        var theTodoFieldContents = $("#todo-display").html();
+        database.ref(userBackupsPath).update({
+            todoFieldContents: theTodoFieldContents,
+        });
     };
 
     function doAddTodoNote() {
@@ -131,6 +155,9 @@ $(document).ready(function () {
             $("#message-display").prepend("<span class='monospace'>" + theMessageDateTime + " <strong>" + theMessageUserName + "</strong>:</span> " + theMessageMessage);
             theLastMessage = theMessageDateTime + theMessageMessage;
         };
+        setTimeout(function () {
+            writeEntriesFieldBackup();
+        }, 500);
         if ((theCurrentGeolocation != "lat: undefined, lng: undefined") && (theCurrentGeolocation != null)) {
             console.log(theMessageDateTime, theMessageUserName, theCurrentGeolocation);
             let theLatLong = { lat: theCurrentLat, lng: theCurrentLong };
@@ -145,9 +172,12 @@ $(document).ready(function () {
         let theTodoUserName = snapshot.child(userTodosPath + "/userName/").val();
         let theTodoMessage = snapshot.child(userTodosPath + "/todo/").val();
         if (theTodoDateTime != null && theTodoDateTime + theTodoMessage != theLastTodo) {
-            $("#todo-display").prepend("<span class='monospace'>" + theTodoDateTime + " <strong>" + theTodoUserName + "</strong>:</span> " + theTodoMessage);
+            $("#todo-display").prepend(theTodoDateTime + ": " + theTodoMessage);
             theLastTodo = theTodoDateTime + theTodoMessage;
         };
+        setTimeout(function () {
+            writeTodosFieldBackup();
+        }, 500);
     }, function (errorObject) {
         console.log("todos-error: " + errorObject.code);
     });
@@ -281,6 +311,7 @@ $(document).ready(function () {
             userInstancesPath = decodeURIComponent(theInstancesPath);
             userMessagesPath = userInstancesPath + "/messages";
             userTodoPath = userInstancesPath + "/todos";
+            userBackupsPath = userInstancesPath + "/backups";
             console.log("new path: " + decodeURIComponent(theInstancesPath));
         } else {
             console.log("new path was null, existing path is: " + userInstancesPath);
@@ -347,11 +378,15 @@ $(document).ready(function () {
                     }
                     userMessagesPath = userInstancesPath + "/messages";
                     userTodosPath = userInstancesPath + "/todos";
+                    userBackupsPath = userInstancesPath + "/backups";
                 }
                 if (localStorageLastURLParams != null) {
                     turnURLIntoUserInstancesPath(localStorageLastURLParams);
                 };
                 getLocation();
+                setTimeout(function () {
+                    retrieveBackups();
+                }, 500);
                 setTimeout(function () {
                     doAddEntry("connected");
                 }, 2000);
