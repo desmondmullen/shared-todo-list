@@ -12,14 +12,6 @@ p {
     margin-left: 15%;
 }
 
-/* #signout-button {
-    text-align: right;
-    position: absolute;
-    top: 105px;
-    right: 5px;
-}
- */
-
 #input-message, #input-test {
     display: block;
     text-align: left;
@@ -46,7 +38,7 @@ label {
 }
 
 .monospace {
-    font-family: 'Courier New', Courier, monospace;
+    /* font-family: 'Courier New', Courier, monospace; */
 }
 
 .text-align-left {
@@ -116,6 +108,24 @@ hr {
     content: "";
     clear: both;
     display: table;
+}
+
+#tasks {}
+
+.section-todo {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.section-todo button {
+    margin: 5px 0 0 0;
+}
+
+hr {
+    display: block;
+    width: 100%;
+    margin-left: 0;
 }
 
 #map {

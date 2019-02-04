@@ -18,6 +18,7 @@ $(document).ready(function () {
     var userTodosPath;
     var theLastMessage;
     var theLastTodo;
+    var theCount = 0;
     var geolocationListField = $("#geolocation-list");
     var geolocationStatusField = $("#geolocation-status");
     var map;
@@ -46,15 +47,39 @@ $(document).ready(function () {
         signOut();
         emptyInputFields();
     });
+
+    $("body").delegate(".btn-delete", "click", function (event) {
+        console.log("here");
+        let theName = event.target.id;
+        let theIdToDelete = theName.slice((theName.indexOf("-") + 1));
+        let theDeleteString = "#task-" + theIdToDelete
+        console.log(theDeleteString, theCount);
+        $(theDeleteString).remove();
+        theDeleteString = "#hr-" + theIdToDelete
+        $(theDeleteString).remove();
+    });
+    $("body").delegate(".btn-add-note", "click", function (event) {
+        let theName = event.target.id;
+        let theIdToAddNote = theName.slice((theName.indexOf("-") + 1));
+        let theAddNoteString = "#task-" + theIdToAddNote
+        // $(theAddNoteString).text($("#input-message")).val().trim();
+        alert("need yo make this work");
+        $("#input-message").val("");
+    });
     //#endregion
 
     //#region - functions
     function retrieveBackups() {
-        // database.ref(userTodosPath).on("value", function (snapshot) {
         database.ref(userBackupsPath).once("value", function (snapshot) {
-            let theEntriesBackup = snapshot.child(userMessagesPath + "/entriesFieldContents/").val();
-            let theTodosBackup = snapshot.child(userMessagesPath + "/userName/").val();
+            var theEntriesBackup = snapshot.child(userBackupsPath + "/entriesFieldContents/").val();
+            var theTodosBackup = snapshot.child(userBackupsPath + "/todosFieldContents/").val();
+            theTempCount = snapshot.child(userBackupsPath + "/theCount/").val();
+            if (theTempCount > 0) {
+                theCount = theTempCount;
+            };
         });
+        $("message-display").html(theEntriesBackup);
+        $("todo-display").html(theTodosBackup);
     }
 
     function doAddEntry(automatic) {
@@ -94,20 +119,22 @@ $(document).ready(function () {
         let todaysDate = new Date().toLocaleDateString("en-US");
         let currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         console.log("do add todo. userID is: " + userID);
-        var todoMessage = $("#input-message").val().trim() + "<br>";
+        var todoMessage = "<section id=\"task-" + theCount + "\" class=\"section-todo\">" + todaysDate + ": " + $("#input-message").val().trim() + "<button id=\"btnaddnote-" + theCount + "\" class=\"btn-add-note\">add note</button><button id=\"btndelete-" + theCount + "\" class=\"btn-delete\">delete</button></section><hr id=\"hr-" + theCount + "\">";
         database.ref(userTodosPath).set({
-            dateTime: todaysDate + " " + currentTime,
-            userName: userName,
             todo: todoMessage,
         });
+        database.ref(userBackupsPath).update({
+            theCount: theCount,
+        });
+        theCount++
         $("#input-message").val("");
     };
 
     function writeTodosFieldBackup() {
         console.log("write todos field backup");
-        var theTodoFieldContents = $("#todo-display").html();
+        var theTodosFieldContents = $("#todo-display").html();
         database.ref(userBackupsPath).update({
-            todoFieldContents: theTodoFieldContents,
+            todoFieldContents: theTodosFieldContents,
         });
     };
 
@@ -117,8 +144,6 @@ $(document).ready(function () {
         console.log("do add todo note:" + automatic + ", userID is: " + userID);
         var todoNote = $("#input-message").val().trim() + "<br>";
         database.ref(userTodosPath).set({
-            dateTime: todaysDate + " " + currentTime,
-            userName: userName,
             todoNote: todoNote
         });
         $("#input-message").val("");
@@ -141,6 +166,7 @@ $(document).ready(function () {
         userLongitude;
         userLatLong;
     };
+
     //#endregion
 
     //#region - listeners
@@ -168,12 +194,10 @@ $(document).ready(function () {
     });
 
     database.ref(userTodosPath).on("value", function (snapshot) {
-        let theTodoDateTime = snapshot.child(userTodosPath + "/dateTime/").val();
-        let theTodoUserName = snapshot.child(userTodosPath + "/userName/").val();
         let theTodoMessage = snapshot.child(userTodosPath + "/todo/").val();
-        if (theTodoDateTime != null && theTodoDateTime + theTodoMessage != theLastTodo) {
-            $("#todo-display").prepend(theTodoDateTime + ": " + theTodoMessage);
-            theLastTodo = theTodoDateTime + theTodoMessage;
+        if (theTodoMessage != theLastTodo) {
+            $("#todo-display").prepend(theTodoMessage);
+            theLastTodo = theTodoMessage;
         };
         setTimeout(function () {
             writeTodosFieldBackup();
@@ -395,6 +419,21 @@ $(document).ready(function () {
     }
 
     initializeDatabaseReferences();
+    //#endregion
+
+    //#region - mobile formatting fix
+    var isMobile = {
+        Android: function () { return navigator.userAgent.match(/Android/i); },
+        BlackBerry: function () { return navigator.userAgent.match(/BlackBerry/i); },
+        iOS: function () { return navigator.userAgent.match(/iPhone|iPad|iPod/i); },
+        Opera: function () { return navigator.userAgent.match(/Opera Mini/i); },
+        Windows: function () { return navigator.userAgent.match(/IEMobile/i); },
+        any: function () { return (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Opera() || isMobile.Windows()); }
+    };
+
+    if (isMobile.Android()) {
+        // $("#message-display").css("top", "60%");
+    };
     //#endregion
 
     //#region - geolocation
