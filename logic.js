@@ -300,7 +300,7 @@ $(document).ready(function () {
     function sendEmailLink(theEmailAddress) {
         let actionCodeSettings = {
             // URL must be whitelisted in the Firebase Console.
-            'url': "https://desmondmullen.com/simple-messaging/?" + userInstancesPath,
+            'url': "https://desmondmullen.com/shared-todo-list/?" + userInstancesPath,
             'handleCodeInApp': true // This must be true.
         };
         firebase.auth().sendSignInLinkToEmail(theEmailAddress, actionCodeSettings).then(function () {
