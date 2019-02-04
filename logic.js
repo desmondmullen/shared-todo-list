@@ -67,6 +67,31 @@ $(document).ready(function () {
         $("#input-message").val("");
     };
 
+    function doAddTodo() {
+        let todaysDate = new Date().toLocaleDateString("en-US");
+        let currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        console.log("do add entry:" + automatic + ", userID is: " + userID);
+        if (automatic != "connected" && automatic != "disconnected") {
+            var entryMessage = $("#input-message").val().trim() + "<br>";
+        } else {
+            if (automatic == "connected") {
+                var entryMessage = "[connected]<br>";
+            } else {
+                var entryMessage = "[disconnected]<br>";
+            };
+        };
+        database.ref(userMessagesPath).set({
+            dateTime: todaysDate + " " + currentTime,
+            userName: userName,
+            message: entryMessage,
+            currentLat: userLatitude,
+            currentLong: userLongitude,
+            currentGeolocation: "lat: " + userLatitude +
+                ", lng: " + userLongitude
+        });
+        $("#input-message").val("");
+    };
+
     database.ref(userMessagesPath).on("value", function (snapshot) {
         let theMessageDateTime = snapshot.child(userMessagesPath + "/dateTime/").val();
         let theMessageUserName = snapshot.child(userMessagesPath + "/userName/").val();
@@ -88,6 +113,27 @@ $(document).ready(function () {
         console.log("entries-error: " + errorObject.code);
     });
 
+    database.ref(userTodosPath).on("value", function (snapshot) {
+        let theTodoDateTime = snapshot.child(userTodosPath + "/dateTime/").val();
+        let theTodoUserName = snapshot.child(userTodosPath + "/userName/").val();
+        let theTodoTodo = snapshot.child(userTodosPath + "/message/").val();
+        let theCurrentLat = parseFloat(snapshot.child(userTodosPath + "/currentLat/").val());
+        let theCurrentLong = parseFloat(snapshot.child(userTodosPath + "/currentLong/").val());
+        let theCurrentGeolocation = snapshot.child(userTodosPath + "/currentGeolocation/").val();
+        if (theTodoDateTime != null && theTodoDateTime + theTodoMessage != theLastTodo) {
+            $("#message-display").prepend("<span class='monospace'>" + theTodoDateTime + " <strong>" + theTodoUserName + "</strong>:</span> " + theTodoMessage);
+            theLastTodo = theTodoDateTime + theTodoMessage;
+        };
+        if ((theCurrentGeolocation != "lat: undefined, lng: undefined") && (theCurrentGeolocation != null)) {
+            console.log(theTodoDateTime, theTodoUserName, theCurrentGeolocation);
+            // geolocationListField.prepend(theTodoDateTime + " <strong>" + theTodoUserName + "</strong>: " + theCurrentGeolocation + "<br>");
+            let theLatLong = { lat: theCurrentLat, lng: theCurrentLong };
+            placeMarker(theLatLong, theTodoUserName);
+        };
+    }, function (errorObject) {
+        console.log("entries-error: " + errorObject.code);
+    });
+
     function emptyInputFields() {
         console.log("empty input fields");
         $("#input-message").val("");
@@ -99,6 +145,7 @@ $(document).ready(function () {
         userIdentificationPath = "";
         userInstancesPath = "";
         userMessagesPath = "";
+        userTodoPath = "";
         userLatitude;
         userLongitude;
         userLatLong;
@@ -231,6 +278,7 @@ $(document).ready(function () {
         if (theInstancesPath != null) {
             userInstancesPath = decodeURIComponent(theInstancesPath);
             userMessagesPath = userInstancesPath + "/messages";
+            userTodoPath = userInstancesPath + "/todos";
             console.log("new path: " + decodeURIComponent(theInstancesPath));
         } else {
             console.log("new path was null, existing path is: " + userInstancesPath);

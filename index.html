@@ -26,19 +26,17 @@
     <header>
         <h3>Shared To-Do List</h3>
     </header>
-    <div id="application">
-        <form class="input-form">
-            <label for="input-message" class="label-message">Message:</label> <input id="input-message" type="text"
-                name="input-message">
-            <div id="add-entry-display"><button id="add-entry" class="add-entry">Add Message</button>
-            </div>
-        </form>
-        <div id="signout-button"><button id="send-link">Send
+    <form class="input-form">
+        <label for="input-message" class="label-message">Message or To-Do:</label> <input id="input-message" type="text"
+            name="input-message">
+        <div id="add-entry-display"><button id="add-entry" class="add-entry" type="submit">Add Message</button><button
+                id="add-todo" class="add-entry" type="button">Add To-Do</button><button id="send-link" type="button">Send
                 Link</button>
-            <button id="sign-out">Sign Out</button></div>
-        <div id="message-display"></div>
-        <div id="todo-display"></div>
-    </div>
+            <button id="sign-out" type="button">Sign Out</button>
+        </div>
+    </form>
+    <div id="message-display"></div>
+    <div id="todo-display">text</div>
     <div id="map"></div>
     <div class="bottom-bar">
         <section id="geolocation-status">Updating geolocation...</section>

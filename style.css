@@ -12,12 +12,13 @@ p {
     margin-left: 15%;
 }
 
-#signout-button {
+/* #signout-button {
     text-align: right;
     position: absolute;
     top: 105px;
     right: 5px;
 }
+ */
 
 #input-message, #input-test {
     display: block;
@@ -32,13 +33,10 @@ p {
     text-align: center;
 }
 
-#application {
-    display: inline;
-}
-
 .input-form {
     background-color: lightskyblue;
     padding: 10px 0 0 0;
+    /* margin-bottom: 25%; */
 }
 
 label {
@@ -94,36 +92,38 @@ hr {
 }
 
 #message-display {
-    position: fixed;
-    top: 215px;
-    left: 10px;
-    z-index: 99;
-    background-color: white;
+    float: left;
+    width: 48%;
+    margin-left: 1%;
+    margin-right: 1%;
+    margin-top: 1%;
+    height: 25%;
+    background-color: lightblue;
     padding: 0 10px;
 }
 
 #todo-display {
-    position: fixed;
-    height: 50%;
-    width: 35%;
-    top: 215px;
-    right: 10px;
-    z-index: 99;
-    background-color: white;
+    float: left;
+    width: 48%;
+    margin-left: 1%;
+    margin-top: 1%;
+    height: 25%;
+    background-color: lightgreen;
     padding: 0 10px;
 }
 
-#map {
-    height: 77%;
-    background-color: gray;
+#todo-display::after {
+    content: "";
+    clear: both;
+    display: table;
 }
 
-#geolocation-list {
-    position: fixed;
-    bottom: 4ch;
-    height: 7ch;
-    white-space: nowrap;
-    overflow: hidden;
+#map {
+    float: none;
+    position: inherit;
+    margin-top: 16%;
+    height: 50%;
+    background-color: gray;
 }
 
 .bottom-bar {
@@ -163,7 +163,7 @@ hr {
     label {
         margin: 5px 0px 0px 0px;
     }
-    #signout-button {
+    /* #signout-button {
         text-align: center;
         position: relative;
         top: 0;
@@ -174,7 +174,7 @@ hr {
     #signout-button button {
         padding: 0;
         margin: 0 10px;
-    }
+    } */
     #geolocation-status {
         position: relative;
         padding: 0;
