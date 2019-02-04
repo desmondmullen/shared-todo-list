@@ -1,7 +1,5 @@
-//TODO: stop the echos
-
 $(document).ready(function () {
-    // Initialize Firebase
+    //#region - initialize firebase and variables
     var config = {
         apiKey: "AIzaSyC3DrasuTKwDHLaaqV_hdlVnnLDqdTY1gE",
         authDomain: "dsm-simple-messaging.firebaseapp.com",
@@ -14,19 +12,26 @@ $(document).ready(function () {
 
     var database = firebase.database();
     var userID;
-    var userSignedIn;
     var userName;
     var userIdentificationPath;
     var userInstancesPath;
     var userMessagesPath;
+    var userTodosPath;
     var theLastMessage;
     var geolocationListField = $("#geolocation-list");
     var geolocationStatusField = $("#geolocation-status");
     var map;
+    //#endregion
 
+    //#region - buttons
     $(".add-entry").on("click", function (event) {
         event.preventDefault();
         doAddEntry();
+    });
+
+    $("#add-todo").on("click", function (event) {
+        event.preventDefault();
+        doAddTodo();
     });
 
     $("#send-link").on("click", function () {
@@ -41,7 +46,9 @@ $(document).ready(function () {
         signOut();
         emptyInputFields();
     });
+    //#endregion
 
+    //#region - functions
     function doAddEntry(automatic) {
         let todaysDate = new Date().toLocaleDateString("en-US");
         let currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -70,28 +77,49 @@ $(document).ready(function () {
     function doAddTodo() {
         let todaysDate = new Date().toLocaleDateString("en-US");
         let currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        console.log("do add entry:" + automatic + ", userID is: " + userID);
-        if (automatic != "connected" && automatic != "disconnected") {
-            var entryMessage = $("#input-message").val().trim() + "<br>";
-        } else {
-            if (automatic == "connected") {
-                var entryMessage = "[connected]<br>";
-            } else {
-                var entryMessage = "[disconnected]<br>";
-            };
-        };
-        database.ref(userMessagesPath).set({
+        console.log("do add todo:" + automatic + ", userID is: " + userID);
+        var todoMessage = $("#input-message").val().trim() + "<br>";
+        database.ref(userTodosPath).set({
             dateTime: todaysDate + " " + currentTime,
             userName: userName,
-            message: entryMessage,
-            currentLat: userLatitude,
-            currentLong: userLongitude,
-            currentGeolocation: "lat: " + userLatitude +
-                ", lng: " + userLongitude
+            todo: todoMessage,
         });
         $("#input-message").val("");
     };
 
+    function doAddTodoNote() {
+        let todaysDate = new Date().toLocaleDateString("en-US");
+        let currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        console.log("do add todo note:" + automatic + ", userID is: " + userID);
+        var todoNote = $("#input-message").val().trim() + "<br>";
+        database.ref(userTodosPath).set({
+            dateTime: todaysDate + " " + currentTime,
+            userName: userName,
+            todoNote: todoNote
+        });
+        $("#input-message").val("");
+    };
+
+    function emptyInputFields() {
+        console.log("empty input fields");
+        $("#input-message").val("");
+        $("#message-display").text("");
+        $("#todo-display").text("");
+        $("#geolocation-list").text("");
+        userID = "";
+        userSignedIn = "";
+        userName = "";
+        userIdentificationPath = "";
+        userInstancesPath = "";
+        userMessagesPath = "";
+        userTodoPath = "";
+        userLatitude;
+        userLongitude;
+        userLatLong;
+    };
+    //#endregion
+
+    //#region - listeners
     database.ref(userMessagesPath).on("value", function (snapshot) {
         let theMessageDateTime = snapshot.child(userMessagesPath + "/dateTime/").val();
         let theMessageUserName = snapshot.child(userMessagesPath + "/userName/").val();
@@ -105,7 +133,6 @@ $(document).ready(function () {
         };
         if ((theCurrentGeolocation != "lat: undefined, lng: undefined") && (theCurrentGeolocation != null)) {
             console.log(theMessageDateTime, theMessageUserName, theCurrentGeolocation);
-            // geolocationListField.prepend(theMessageDateTime + " <strong>" + theMessageUserName + "</strong>: " + theCurrentGeolocation + "<br>");
             let theLatLong = { lat: theCurrentLat, lng: theCurrentLong };
             placeMarker(theLatLong, theMessageUserName);
         };
@@ -116,40 +143,15 @@ $(document).ready(function () {
     database.ref(userTodosPath).on("value", function (snapshot) {
         let theTodoDateTime = snapshot.child(userTodosPath + "/dateTime/").val();
         let theTodoUserName = snapshot.child(userTodosPath + "/userName/").val();
-        let theTodoTodo = snapshot.child(userTodosPath + "/message/").val();
-        let theCurrentLat = parseFloat(snapshot.child(userTodosPath + "/currentLat/").val());
-        let theCurrentLong = parseFloat(snapshot.child(userTodosPath + "/currentLong/").val());
-        let theCurrentGeolocation = snapshot.child(userTodosPath + "/currentGeolocation/").val();
+        let theTodoMessage = snapshot.child(userTodosPath + "/todo/").val();
         if (theTodoDateTime != null && theTodoDateTime + theTodoMessage != theLastTodo) {
-            $("#message-display").prepend("<span class='monospace'>" + theTodoDateTime + " <strong>" + theTodoUserName + "</strong>:</span> " + theTodoMessage);
+            $("#todo-display").prepend("<span class='monospace'>" + theTodoDateTime + " <strong>" + theTodoUserName + "</strong>:</span> " + theTodoMessage);
             theLastTodo = theTodoDateTime + theTodoMessage;
         };
-        if ((theCurrentGeolocation != "lat: undefined, lng: undefined") && (theCurrentGeolocation != null)) {
-            console.log(theTodoDateTime, theTodoUserName, theCurrentGeolocation);
-            // geolocationListField.prepend(theTodoDateTime + " <strong>" + theTodoUserName + "</strong>: " + theCurrentGeolocation + "<br>");
-            let theLatLong = { lat: theCurrentLat, lng: theCurrentLong };
-            placeMarker(theLatLong, theTodoUserName);
-        };
     }, function (errorObject) {
-        console.log("entries-error: " + errorObject.code);
+        console.log("todos-error: " + errorObject.code);
     });
-
-    function emptyInputFields() {
-        console.log("empty input fields");
-        $("#input-message").val("");
-        $("#message-display").text("");
-        $("#geolocation-list").text("");
-        userID = "";
-        userSignedIn = "";
-        userName = "";
-        userIdentificationPath = "";
-        userInstancesPath = "";
-        userMessagesPath = "";
-        userTodoPath = "";
-        userLatitude;
-        userLongitude;
-        userLatLong;
-    };
+    //#endregion
 
     //#region - authorization
     //--> how to fold a region //#region and //#endregion and //region and //endregion
@@ -317,6 +319,7 @@ $(document).ready(function () {
     }
     //#endregion
 
+    //#region - initialize database
     function initializeDatabaseReferences() {
         let localStorageUIPath = window.localStorage.getItem("userInstancesPath");
         let localStorageLastURLParams = window.localStorage.getItem("theLastURLParameters");
@@ -343,6 +346,7 @@ $(document).ready(function () {
                         userInstancesPath = "users/" + userID + "/instances/" + (+new Date());
                     }
                     userMessagesPath = userInstancesPath + "/messages";
+                    userTodosPath = userInstancesPath + "/todos";
                 }
                 if (localStorageLastURLParams != null) {
                     turnURLIntoUserInstancesPath(localStorageLastURLParams);
@@ -356,6 +360,7 @@ $(document).ready(function () {
     }
 
     initializeDatabaseReferences();
+    //#endregion
 
     //#region - geolocation
     var userLatitude;
@@ -372,7 +377,7 @@ $(document).ready(function () {
     }
 
     getLocation();
-    setInterval(function () { getLocation(); }, 300000);
+    setInterval(function () { getLocation(); }, 60000);
 
     function showPosition(position) {
         userLatitude = parseFloat(position.coords.latitude);
@@ -397,7 +402,6 @@ $(document).ready(function () {
 
         }, 500);
     }
-    //#endregion
 
     function placeMarker(theLatLong, title) {
         var marker = new google.maps.Marker({
@@ -406,7 +410,7 @@ $(document).ready(function () {
             title: title
         });
     }
+    //#endregion
 
-
-    console.log("v1.9773");
+    console.log("v1");
 });
