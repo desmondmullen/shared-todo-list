@@ -28,12 +28,17 @@ $(document).ready(function () {
     //#region - buttons
     $("#add-entry").on("click", function (event) {
         event.preventDefault();
-        doAddEntry();
+        if ($("#input-message").val().trim() !== "") {
+            doAddEntry();
+        };
     });
 
     $("#add-todo").on("click", function (event) {
         event.preventDefault();
-        doAddTodo();
+        if ($("#input-message").val().trim() !== "") {
+            doAddTodo();
+        };
+        $("#input-message").focus();
     });
 
     $("#send-link").on("click", function () {
@@ -61,12 +66,15 @@ $(document).ready(function () {
     });
 
     $("body").delegate(".btn-add-note", "click", function (event) {
-        let theName = event.target.id;
-        let theIdToAddNote = theName.slice((theName.indexOf("-") + 1));
-        let theAddNoteString = "#notes-" + theIdToAddNote
-        $(theAddNoteString).append($("<div>").text($("#input-message").val().trim()));
-        writeTodosFieldBackup();
-        $("#input-message").val("");
+        if ($("#input-message").val().trim() !== "") {
+            let theName = event.target.id;
+            let theIdToAddNote = theName.slice((theName.indexOf("-") + 1));
+            let theAddNoteString = "#notes-" + theIdToAddNote
+            $(theAddNoteString).append($("<div>").addClass("monospace").text($("#input-message").val().trim()));
+            writeTodosFieldBackup();
+            $("#input-message").val("");
+        };
+        $("#input-message").focus();
     });
     //#endregion
 
@@ -84,7 +92,7 @@ $(document).ready(function () {
             //         var entryMessage = "[disconnected]<br>";
             //     };
             // };
-            $("#message-display").prepend("<span class='monospace'>" + todaysDate + " " + currentTime + " <strong>" + userName + "</strong>:</span> " + entryMessage);
+            $("#message-display").prepend(todaysDate + " " + currentTime + " <strong>" + userName + "</strong>:<span class=\"monospace\">" + entryMessage + "</span>");
             theLastMessage = todaysDate + " " + currentTime + entryMessage;
             writeEntriesFieldBackup();
             $("#input-message").val("");
@@ -376,5 +384,5 @@ $(document).ready(function () {
     }
     //#endregion
 
-    console.log("v1.1595");
+    console.log("v1.16");
 });
