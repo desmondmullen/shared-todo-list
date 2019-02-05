@@ -31,6 +31,18 @@ p {
     /* margin-bottom: 25%; */
 }
 
+.label-message {
+    float: left;
+    /* display: inline; */
+}
+
+#sign-out {
+    float: right;
+    margin-top: 0;
+    /* display: inline;
+    margin-left: 90%; */
+}
+
 label {
     /* text-align: right; */
     font-weight: bold;
