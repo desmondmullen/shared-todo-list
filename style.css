@@ -98,19 +98,19 @@ hr {
 #message-display {
     overflow: auto;
     float: left;
-    width: 48%;
+    width: 48.5%;
     margin-left: 1%;
     margin-right: 0.5%;
     margin-top: 1%;
     height: 25%;
-    background-color: lightblue;
+    background-color: gainsboro;
     padding: 0 10px;
 }
 
 #todo-display {
     overflow: auto;
     float: left;
-    width: 48%;
+    width: 48.5%;
     margin-left: 0.5%;
     margin-top: 1%;
     height: 25%;
