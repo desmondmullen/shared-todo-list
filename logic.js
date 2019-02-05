@@ -23,6 +23,8 @@ $(document).ready(function () {
     var theCount = 0;
     var geolocationStatusField = $("#geolocation-status");
     var map;
+    var localStorageLastURLParams;
+    var localStorageUIPath;
     //#endregion
 
     //#region - buttons
@@ -390,8 +392,8 @@ $(document).ready(function () {
 
     //#region - initialize database
     function initializeDatabaseReferences() {
-        let localStorageUIPath = window.localStorage.getItem("userInstancesPath");
-        let localStorageLastURLParams = window.localStorage.getItem("theLastURLParameters");
+        localStorageUIPath = window.localStorage.getItem("userInstancesPath");
+        localStorageLastURLParams = window.localStorage.getItem("theLastURLParameters");
         userName = window.localStorage.getItem("userName");
         console.log("localStorageUIPath: " + localStorageUIPath);
         firebase.auth().onAuthStateChanged(function (user) {
@@ -516,5 +518,5 @@ $(document).ready(function () {
     }
     //#endregion
 
-    console.log("v1.155");
+    console.log("v1.1551");
 });
