@@ -83,9 +83,9 @@ $(document).ready(function () {
                 theCount = theTempCount;
             };
         });
-        $("message-display").html(theEntriesBackup);
+        $("#message-display").html(theEntriesBackup);
         alert(theEntriesBackup);
-        $("todo-display").html(theTodosBackup);
+        $("#todo-display").html(theTodosBackup);
         alert(theTodosBackup);
     }
 
@@ -149,7 +149,7 @@ $(document).ready(function () {
             console.log("write todos field backup");
             var theTodosFieldContents = $("#todo-display").html();
             database.ref(userBackupsPath).update({
-                todoFieldContents: theTodosFieldContents,
+                todosFieldContents: theTodosFieldContents,
             });
         };
     };
@@ -533,5 +533,5 @@ $(document).ready(function () {
     }
     //#endregion
 
-    console.log("v1.157");
+    console.log("v1.1571");
 });
