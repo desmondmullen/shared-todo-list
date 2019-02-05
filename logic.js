@@ -240,7 +240,7 @@ $(document).ready(function () {
             if (user) {
                 console.log("auth state changed: " + user.uid);
                 userID = user.uid; //when connecting by link, this will be the same user
-                if (lastLocalStorageWrite + 3000 < (+new Date())) {
+                if (lastLocalStorageWrite + 30000 < Date.now() {
                     if (userName != "" && userName != null && userName != undefined) {
                         let tempUserName = prompt("Please enter a name to use for sending messages. Last time, this was used:", userName);
                         if (tempUserName !== null && tempUserName.trim() !== "") {
@@ -254,8 +254,9 @@ $(document).ready(function () {
                         if (userName == null || userName.trim() == "") {
                             userName = shortUserName;
                         };
+                        let theLastWrite = Date.now()
                         window.localStorage.setItem("userName", userName);
-                        window.localStorage.setItem("lastWrite", (+new Date()));
+                        window.localStorage.setItem("lastWrite", theLastWrite);
                         console.log("user name after prompt for new. LS: " + window.localStorage.getItem("userName"));
                     };
                 } else {
@@ -361,5 +362,5 @@ $(document).ready(function () {
     }
     //#endregion
 
-    console.log("v1.159");
+    console.log("v1.1591");
 });
