@@ -20,6 +20,7 @@ $(document).ready(function () {
     var map;
     var localStorageLastURLParams;
     var localStorageUIPath;
+    var lastLocalStorageWrite;
     var authStateChanged = false;
     var turnedURLToInstancePath; //this is true if moot
     //#endregion
@@ -233,27 +234,34 @@ $(document).ready(function () {
         localStorageUIPath = window.localStorage.getItem("userInstancesPath");
         localStorageLastURLParams = window.localStorage.getItem("theLastURLParameters");
         userName = window.localStorage.getItem("userName");
+        lastLocalStorageWrite = window.localStorage.getItem("userName");
         console.log("localStorageUIPath: " + localStorageUIPath);
         firebase.auth().onAuthStateChanged(function (user) {
             if (user) {
                 console.log("auth state changed: " + user.uid);
                 userID = user.uid; //when connecting by link, this will be the same user
-                if (userName != "" && userName != null && userName != undefined) {
-                    let tempUserName = prompt("Please enter a name to use for sending messages. Last time, this was used:", userName);
-                    if (tempUserName !== null && tempUserName.trim() !== "") {
-                        userName = tempUserName;
+                if (lastLocalStorageWrite + 3000 < (+new Date())) {
+                    if (userName != "" && userName != null && userName != undefined) {
+                        let tempUserName = prompt("Please enter a name to use for sending messages. Last time, this was used:", userName);
+                        if (tempUserName !== null && tempUserName.trim() !== "") {
+                            userName = tempUserName;
+                        };
+                        window.localStorage.setItem("userName", userName);
+                        console.log("user name after last used. LS: " + window.localStorage.getItem("userName"));
+                    } else {
+                        let shortUserName = Math.floor(Math.random() * 1000 + 1000);
+                        userName = prompt("Please enter a name to use for sending messages. If you don't choose one, we'll call you by this random number:", shortUserName);
+                        if (userName == null || userName.trim() == "") {
+                            userName = shortUserName;
+                        };
+                        window.localStorage.setItem("userName", userName);
+                        window.localStorage.setItem("lastWrite", (+new Date()));
+                        console.log("user name after prompt for new. LS: " + window.localStorage.getItem("userName"));
+                    } else {
+                        console.log("user name from LS - no prompting: " + window.localStorage.getItem("userName"));
                     };
-                    window.localStorage.setItem("userName", userName);
-                    console.log("user name from LS: " + window.localStorage.getItem("userName"));
-                } else {
-                    let shortUserName = Math.floor(Math.random() * 1000 + 1000);
-                    userName = prompt("Please enter a name to use for sending messages. If you don't choose one, we'll call you by this random number:", shortUserName);
-                    if (userName == null || userName.trim() == "") {
-                        userName = shortUserName;
-                    };
-                    window.localStorage.setItem("userName", userName);
-                    console.log("user name from LS: " + window.localStorage.getItem("userName"));
                 };
+
                 // User is signed in.
                 if (window.location.href.indexOf("?") > 0) {
                     console.log("UIP before: " + userInstancesPath);
@@ -274,7 +282,9 @@ $(document).ready(function () {
                     turnURLIntoUserInstancesPath(localStorageLastURLParams);
                 };
                 authStateChanged = true;
-                getLocation();
+                if (lastLocalStorageWrite + 3000 < (+new Date())) {
+                    getLocation(); //correct to do this if?
+                }
                 setTimeout(function () {
                     doAddEntry("connected");
                 }, 2000);
@@ -350,5 +360,5 @@ $(document).ready(function () {
     }
     //#endregion
 
-    console.log("v1.1587");
+    console.log("v1.1588");
 });
