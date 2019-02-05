@@ -178,6 +178,7 @@ $(document).ready(function () {
     });
 
     function turnURLIntoUserInstancesPath(theLink) {
+        console.log("turn URL: " + theLink);
         if (theLink == null || theLink == "" || theLink == undefined) {
             theLink = window.location.href;
         }
