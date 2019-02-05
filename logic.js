@@ -102,15 +102,18 @@ $(document).ready(function () {
                 var entryMessage = "[disconnected]<br>";
             };
         };
-        database.ref(userMessagesPath).set({
-            dateTime: todaysDate + " " + currentTime,
-            userName: userName,
-            message: entryMessage,
-            currentLat: userLatitude,
-            currentLong: userLongitude,
-            currentGeolocation: "lat: " + userLatitude +
-                ", lng: " + userLongitude
-        });
+        // database.ref(userMessagesPath).set({
+        //     dateTime: todaysDate + " " + currentTime,
+        //     userName: userName,
+        //     message: entryMessage,
+        //     currentLat: userLatitude,
+        //     currentLong: userLongitude,
+        //     currentGeolocation: "lat: " + userLatitude +
+        //         ", lng: " + userLongitude
+        // });
+        $("#message-display").prepend("<span class='monospace'>" + todaysDate + " " + currentTime + " <strong>" + userName + "</strong>:</span> " + entryMessage);
+        theLastMessage = todaysDate + " " + currentTime + entryMessage;
+        writeEntriesFieldBackup();
         $("#input-message").val("");
     };
 
@@ -129,13 +132,15 @@ $(document).ready(function () {
         let currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         console.log("do add todo. userID is: " + userID);
         var todoMessage = "<section id=\"task-" + theCount + "\" class=\"section-todo\">" + todaysDate + ": " + $("#input-message").val().trim() + "<section id=\"notes-" + theCount + "\"></section><button id=\"btnaddnote-" + theCount + "\" class=\"btn-add-note\">add note</button><button id=\"btndelete-" + theCount + "\" class=\"btn-delete\">delete</button></section><hr id=\"hr-" + theCount + "\">";
-        database.ref(userTodosPath).set({
-            todo: todoMessage,
-        });
+        // database.ref(userTodosPath).set({
+        //     todo: todoMessage,
+        // });
         database.ref(userBackupsPath).update({
             theCount: theCount,
         });
+        $("#todo-display").prepend(todoMessage);
         theCount++
+        writeTodosFieldBackup();
         $("#input-message").val("");
     };
 
@@ -190,8 +195,8 @@ $(document).ready(function () {
             let theCurrentLong = parseFloat(snapshot.child(userMessagesPath + "/currentLong/").val());
             let theCurrentGeolocation = snapshot.child(userMessagesPath + "/currentGeolocation/").val();
             if (theMessageDateTime != null && theMessageDateTime + theMessageMessage != theLastMessage) {
-                $("#message-display").prepend("<span class='monospace'>" + theMessageDateTime + " <strong>" + theMessageUserName + "</strong>:</span> " + theMessageMessage);
-                theLastMessage = theMessageDateTime + theMessageMessage;
+                // $("#message-display").prepend("<span class='monospace'>" + theMessageDateTime + " <strong>" + theMessageUserName + "</strong>:</span> " + theMessageMessage);
+                // theLastMessage = theMessageDateTime + theMessageMessage;
             };
             setTimeout(function () {
                 writeEntriesFieldBackup();
@@ -211,7 +216,7 @@ $(document).ready(function () {
         if (theBackupRetrievalHasBeenDone) {
             let theTodoMessage = snapshot.child(userTodosPath + "/todo/").val();
             if (theTodoMessage != theLastTodo) {
-                $("#todo-display").prepend(theTodoMessage);
+                // $("#todo-display").prepend(theTodoMessage);
                 theLastTodo = theTodoMessage;
             };
             setTimeout(function () {
