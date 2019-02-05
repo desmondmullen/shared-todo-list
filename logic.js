@@ -140,6 +140,7 @@ $(document).ready(function () {
     database.ref(userBackupsPath).on("value", function (snapshot) {
         console.log("backups value change - retrieval done: " + theBackupRetrievalHasBeenDone + ". path: " + userBackupsPath);
         if (!theBackupRetrievalHasBeenDone) {
+            console.log("doing backup retrieval: " + userBackupsPath);
             var theEntriesBackup = snapshot.child(userBackupsPath + "/entriesFieldContents/").val();
             var theTodosBackup = snapshot.child(userBackupsPath + "/todosFieldContents/").val();
             theTempCount = snapshot.child(userBackupsPath + "/theCount/").val();
@@ -345,5 +346,5 @@ $(document).ready(function () {
     }
     //#endregion
 
-    console.log("v1.158");
+    console.log("v1.1581");
 });
