@@ -62,9 +62,8 @@ $(document).ready(function () {
     $("body").delegate(".btn-add-note", "click", function (event) {
         let theName = event.target.id;
         let theIdToAddNote = theName.slice((theName.indexOf("-") + 1));
-        let theAddNoteString = "#task-" + theIdToAddNote
+        let theAddNoteString = "#notes-" + theIdToAddNote
         $(theAddNoteString).append($("<div>").text($("#input-message").val().trim()));
-        alert("need yo make this work");
         $("#input-message").val("");
     });
     //#endregion
@@ -120,7 +119,7 @@ $(document).ready(function () {
         let todaysDate = new Date().toLocaleDateString("en-US");
         let currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         console.log("do add todo. userID is: " + userID);
-        var todoMessage = "<section id=\"task-" + theCount + "\" class=\"section-todo\">" + todaysDate + ": " + $("#input-message").val().trim() + "<button id=\"btnaddnote-" + theCount + "\" class=\"btn-add-note\">add note</button><button id=\"btndelete-" + theCount + "\" class=\"btn-delete\">delete</button></section><hr id=\"hr-" + theCount + "\">";
+        var todoMessage = "<section id=\"task-" + theCount + "\" class=\"section-todo\">" + todaysDate + ": " + $("#input-message").val().trim() + "<section id=\"notes-" + theCount + "\"></section><button id=\"btnaddnote-" + theCount + "\" class=\"btn-add-note\">add note</button><button id=\"btndelete-" + theCount + "\" class=\"btn-delete\">delete</button></section><hr id=\"hr-" + theCount + "\">";
         database.ref(userTodosPath).set({
             todo: todoMessage,
         });
