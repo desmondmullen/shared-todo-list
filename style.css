@@ -115,7 +115,7 @@ hr {
 .section-todo {
     display: flex;
     justify-content: space-between;
-    vertical-align: middle;
+    align-items: baseline;
     width: 100%;
 }
 
