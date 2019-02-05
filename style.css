@@ -115,11 +115,16 @@ hr {
 .section-todo {
     display: flex;
     justify-content: space-between;
+    vertical-align: middle;
     width: 100%;
 }
 
 .section-todo button {
     margin: 5px 0 0 0;
+}
+
+.btn-add-note {
+    align-self: flex-end;
 }
 
 hr {

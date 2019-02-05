@@ -161,7 +161,7 @@ $(document).ready(function () {
         userIdentificationPath = "";
         userInstancesPath = "";
         userMessagesPath = "";
-        userTodoPath = "";
+        userTodosPath = "";
         userLatitude;
         userLongitude;
         userLatLong;
@@ -334,7 +334,7 @@ $(document).ready(function () {
         if (theInstancesPath != null) {
             userInstancesPath = decodeURIComponent(theInstancesPath);
             userMessagesPath = userInstancesPath + "/messages";
-            userTodoPath = userInstancesPath + "/todos";
+            userTodosPath = userInstancesPath + "/todos";
             userBackupsPath = userInstancesPath + "/backups";
             console.log("new path: " + decodeURIComponent(theInstancesPath));
         } else {
