@@ -12,9 +12,14 @@ $(document).ready(function () {
     var database = firebase.database();
     var userID;
     var userName;
+    var userIdentificationPath;
     var userInstancesPath;
+    var userMessagesPath;
+    var userTodosPath;
     var userBackupsPath;
     var theBackupRetrievalHasBeenDone = false;
+    var theLastMessage;
+    var theLastTodo;
     var theCount = 0;
     var geolocationStatusField = $("#geolocation-status");
     var map;
@@ -62,12 +67,28 @@ $(document).ready(function () {
         let theIdToAddNote = theName.slice((theName.indexOf("-") + 1));
         let theAddNoteString = "#notes-" + theIdToAddNote
         $(theAddNoteString).append($("<div>").text($("#input-message").val().trim()));
-        writeTodosFieldBackup();
         $("#input-message").val("");
     });
     //#endregion
 
     //#region - functions
+    function retrieveBackups() {
+        console.log("retrieveBackups");
+        theBackupRetrievalHasBeenDone = true;
+        database.ref(userBackupsPath).once("value", function (snapshot) {
+            var theEntriesBackup = snapshot.child(userBackupsPath + "/entriesFieldContents/").val();
+            var theTodosBackup = snapshot.child(userBackupsPath + "/todosFieldContents/").val();
+            theTempCount = snapshot.child(userBackupsPath + "/theCount/").val();
+            if (theTempCount > 0) {
+                theCount = theTempCount;
+            };
+        });
+        $("#message-display").html(theEntriesBackup);
+        alert(theEntriesBackup);
+        $("#todo-display").html(theTodosBackup);
+        alert(theTodosBackup);
+    }
+
     function doAddEntry(automatic) {
         let todaysDate = new Date().toLocaleDateString("en-US");
         let currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -81,6 +102,15 @@ $(document).ready(function () {
                 var entryMessage = "[disconnected]<br>";
             };
         };
+        // database.ref(userMessagesPath).set({
+        //     dateTime: todaysDate + " " + currentTime,
+        //     userName: userName,
+        //     message: entryMessage,
+        //     currentLat: userLatitude,
+        //     currentLong: userLongitude,
+        //     currentGeolocation: "lat: " + userLatitude +
+        //         ", lng: " + userLongitude
+        // });
         $("#message-display").prepend("<span class='monospace'>" + todaysDate + " " + currentTime + " <strong>" + userName + "</strong>:</span> " + entryMessage);
         theLastMessage = todaysDate + " " + currentTime + entryMessage;
         writeEntriesFieldBackup();
@@ -102,6 +132,9 @@ $(document).ready(function () {
         let currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         console.log("do add todo. userID is: " + userID);
         var todoMessage = "<section id=\"task-" + theCount + "\" class=\"section-todo\">" + todaysDate + ": " + $("#input-message").val().trim() + "<section id=\"notes-" + theCount + "\"></section><button id=\"btnaddnote-" + theCount + "\" class=\"btn-add-note\">add note</button><button id=\"btndelete-" + theCount + "\" class=\"btn-delete\">delete</button></section><hr id=\"hr-" + theCount + "\">";
+        // database.ref(userTodosPath).set({
+        //     todo: todoMessage,
+        // });
         database.ref(userBackupsPath).update({
             theCount: theCount,
         });
@@ -121,22 +154,79 @@ $(document).ready(function () {
         };
     };
 
+    function doAddTodoNote() {
+        let todaysDate = new Date().toLocaleDateString("en-US");
+        console.log("do add todo note:" + automatic + ", userID is: " + userID);
+        var todoNote = $("#input-message").val().trim() + "<br>";
+        database.ref(userTodosPath).set({
+            todoNote: todoNote
+        });
+        $("#input-message").val("");
+    };
+
     function emptyInputFields() {
         console.log("empty input fields");
         $("#input-message").val("");
         $("#message-display").text("");
         $("#todo-display").text("");
+        $("#geolocation-list").text("");
         userID = "";
+        userSignedIn = "";
         userName = "";
+        userIdentificationPath = "";
         userInstancesPath = "";
-        userBackupsPath = "";
+        userMessagesPath = "";
+        userTodosPath = "";
         userLatitude;
         userLongitude;
         userLatLong;
     };
+
     //#endregion
 
     //#region - listeners
+    database.ref(userMessagesPath).on("value", function (snapshot) {
+        console.log("messages - retrieval done: " + theBackupRetrievalHasBeenDone);
+        if (theBackupRetrievalHasBeenDone) {
+            let theMessageDateTime = snapshot.child(userMessagesPath + "/dateTime/").val();
+            let theMessageUserName = snapshot.child(userMessagesPath + "/userName/").val();
+            let theMessageMessage = snapshot.child(userMessagesPath + "/message/").val();
+            let theCurrentLat = parseFloat(snapshot.child(userMessagesPath + "/currentLat/").val());
+            let theCurrentLong = parseFloat(snapshot.child(userMessagesPath + "/currentLong/").val());
+            let theCurrentGeolocation = snapshot.child(userMessagesPath + "/currentGeolocation/").val();
+            if (theMessageDateTime != null && theMessageDateTime + theMessageMessage != theLastMessage) {
+                // $("#message-display").prepend("<span class='monospace'>" + theMessageDateTime + " <strong>" + theMessageUserName + "</strong>:</span> " + theMessageMessage);
+                // theLastMessage = theMessageDateTime + theMessageMessage;
+            };
+            setTimeout(function () {
+                writeEntriesFieldBackup();
+            }, 500);
+            if ((theCurrentGeolocation != "lat: undefined, lng: undefined") && (theCurrentGeolocation != null)) {
+                console.log(theMessageDateTime, theMessageUserName, theCurrentGeolocation);
+                let theLatLong = { lat: theCurrentLat, lng: theCurrentLong };
+                placeMarker(theLatLong, theMessageUserName);
+            };
+        };
+    }, function (errorObject) {
+        console.log("entries-error: " + errorObject.code);
+    });
+
+    database.ref(userTodosPath).on("value", function (snapshot) {
+        console.log("todos - retrieval done: " + theBackupRetrievalHasBeenDone);
+        if (theBackupRetrievalHasBeenDone) {
+            let theTodoMessage = snapshot.child(userTodosPath + "/todo/").val();
+            if (theTodoMessage != theLastTodo) {
+                // $("#todo-display").prepend(theTodoMessage);
+                theLastTodo = theTodoMessage;
+            };
+            setTimeout(function () {
+                writeTodosFieldBackup();
+            }, 500);
+        };
+    }, function (errorObject) {
+        console.log("todos-error: " + errorObject.code);
+    });
+
     database.ref(userBackupsPath).on("value", function (snapshot) {
         console.log("backups value change - retrieval done: " + theBackupRetrievalHasBeenDone);
         if (!theBackupRetrievalHasBeenDone) {
@@ -153,6 +243,101 @@ $(document).ready(function () {
     }, function (errorObject) {
         console.log("todos-error: " + errorObject.code);
     });
+    //#endregion
+
+    //#region - authorization
+    //--> how to fold a region //#region and //#endregion and //region and //endregion
+    function toggleSignIn() {
+        if (firebase.auth().currentUser) {
+            //do signout
+        } else {
+            var email = document.getElementById("email").value;
+            var password = document.getElementById("password").value;
+            if (email.length < 4) {
+                alert("Please enter an email address.");
+                return;
+            }
+            if (password.length < 4) {
+                alert("Please enter a password.");
+                return;
+            }
+            firebase.auth().signInWithEmailAndPassword(email, password).catch(function (error) {
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                if (errorCode === "auth/wrong-password") {
+                    alert("Password is incorrect.");
+                } else {
+                    alert(errorMessage);
+                }
+                handleError(error);
+            });
+        }
+    }
+
+    //Handles the sign up button press.
+    function handleSignUp() {
+        var email = document.getElementById("email").value;
+        var password = document.getElementById("password").value;
+        if (email.length < 4) {
+            alert("Please enter an email address.");
+            return;
+        }
+        if (password.length < 4) {
+            alert("Please enter a password.");
+            return;
+        }
+        firebase.auth().createUserWithEmailAndPassword(email, password).catch(function (error) {
+
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            if (errorCode == "auth/weak-password") {
+                alert("The password must be at least 6 characters.");
+            } else {
+                alert(errorMessage);
+            }
+            handleError(error);
+        });
+    }
+
+    function handleSignIn() {
+        console.log("handle sign-in");
+        if (firebase.auth().isSignInWithEmailLink(window.location.href)) {
+            turnURLIntoUserInstancesPath();
+            // Disable the sign-in button during async sign-in tasks.
+            // document.getElementById("sign-in").disabled = true;
+            // Get the email if available.
+            // var email = window.localStorage.getItem('emailForSignIn');
+            // if (!email) {
+            //     // User opened the link on a different device. To prevent session fixation attacks, ask the
+            //     // user to provide the associated email again. For example:
+            //     email = window.prompt('Please provide the email you\'d like to sign-in with for confirmation.');
+            // }
+            if (1 == 2) {
+                // if (email) {
+                firebase.auth().signInWithEmailLink(email, window.location.href).then(function (result) {
+                    turnURLIntoUserInstancesPath();
+                }).catch(function (error) {
+                    handleError(error);
+                });
+            }
+        }
+    }
+
+    function sendPasswordReset() {
+        var email = document.getElementById("email").value;
+        firebase.auth().sendPasswordResetEmail(email).then(function () {
+            alert("If there is an account with the address '" + email + "', a password reset link will be sent to that address.");
+        }).catch(function (error) {
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            if (errorCode == "auth/invalid-email") {
+                alert(errorMessage);
+            } else if (errorCode == "auth/user-not-found") {
+                alert(errorMessage);
+            }
+            handleError(error);
+        });
+    }
     //#endregion
 
     //#region - connections
@@ -186,6 +371,8 @@ $(document).ready(function () {
         let theInstancesPath = (theLink.substring((theLink.indexOf("?") + 1), theLink.indexOf("&")));
         if (theInstancesPath != null) {
             userInstancesPath = decodeURIComponent(theInstancesPath);
+            userMessagesPath = userInstancesPath + "/messages";
+            userTodosPath = userInstancesPath + "/todos";
             userBackupsPath = userInstancesPath + "/backups";
             console.log("new path: " + decodeURIComponent(theInstancesPath));
         } else {
@@ -196,6 +383,7 @@ $(document).ready(function () {
     function signOut() {
         doAddEntry("disconnected");
         firebase.auth().signOut();
+        userSignedIn = false;
         window.localStorage.removeItem("userInstancesPath");
         emptyInputFields();
         window.history.replaceState({}, document.title, window.location.href.split('?')[0]);//cleans up sign-in link params
@@ -251,6 +439,8 @@ $(document).ready(function () {
                     console.log("user name from LS: " + window.localStorage.getItem("userName"));
                 };
                 // User is signed in.
+                userSignedIn = true;
+                userIdentificationPath = "users/" + userID + "/identification";
                 if (window.location.href.indexOf("?") > 0) {
                     turnURLIntoUserInstancesPath();
                     console.log("user ID after signout: " + userID);
@@ -343,5 +533,5 @@ $(document).ready(function () {
     }
     //#endregion
 
-    console.log("v1.1575");
+    console.log("v1.1571");
 });
