@@ -195,6 +195,7 @@ $(document).ready(function () {
         } else {
             console.log("new path was null, existing path is: " + userInstancesPath);
         };
+        location = location; //should reload once
     };
 
     function signOut() {
@@ -349,5 +350,5 @@ $(document).ready(function () {
     }
     //#endregion
 
-    console.log("v1.1585");
+    console.log("v1.1586");
 });
