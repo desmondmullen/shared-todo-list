@@ -77,17 +77,18 @@ $(document).ready(function () {
         console.log("do add entry:" + automatic + ", userID is: " + userID);
         if (automatic != "connected" && automatic != "disconnected") {
             var entryMessage = $("#input-message").val().trim() + "<br>";
-        } else { //maybe uid to firebase and keep track of logged in?
-            // if (automatic == "connected") {
-            //     var entryMessage = "[connected]<br>";
-            // } else {
-            //     var entryMessage = "[disconnected]<br>";
+            // } else { //maybe uid to firebase and keep track of logged in?
+            //     if (automatic == "connected") {
+            //         var entryMessage = "[connected]<br>";
+            //     } else {
+            //         var entryMessage = "[disconnected]<br>";
+            //     };
             // };
+            $("#message-display").prepend("<span class='monospace'>" + todaysDate + " " + currentTime + " <strong>" + userName + "</strong>:</span> " + entryMessage);
+            theLastMessage = todaysDate + " " + currentTime + entryMessage;
+            writeEntriesFieldBackup();
+            $("#input-message").val("");
         };
-        $("#message-display").prepend("<span class='monospace'>" + todaysDate + " " + currentTime + " <strong>" + userName + "</strong>:</span> " + entryMessage);
-        theLastMessage = todaysDate + " " + currentTime + entryMessage;
-        writeEntriesFieldBackup();
-        $("#input-message").val("");
     };
 
     function writeEntriesFieldBackup() {
