@@ -20,6 +20,8 @@ $(document).ready(function () {
     var map;
     var localStorageLastURLParams;
     var localStorageUIPath;
+    var authStateChanged = false;
+    var turnedURLToInstancePath; //this is true if moot
     //#endregion
 
     //#region - buttons
@@ -139,7 +141,7 @@ $(document).ready(function () {
     //#region - listeners
     database.ref(userBackupsPath).on("value", function (snapshot) {
         console.log("backups value change - retrieval done: " + theBackupRetrievalHasBeenDone + ". path: " + userBackupsPath);
-        if (!theBackupRetrievalHasBeenDone) {
+        if (!theBackupRetrievalHasBeenDone && authStateChanged) {
             console.log("doing backup retrieval: " + userBackupsPath);
             var theEntriesBackup = snapshot.child(userBackupsPath + "/entriesFieldContents/").val();
             var theTodosBackup = snapshot.child(userBackupsPath + "/todosFieldContents/").val();
@@ -270,6 +272,7 @@ $(document).ready(function () {
                 if (localStorageLastURLParams != null) {
                     turnURLIntoUserInstancesPath(localStorageLastURLParams);
                 };
+                authStateChanged = true;
                 getLocation();
                 setTimeout(function () {
                     doAddEntry("connected");
@@ -346,5 +349,5 @@ $(document).ready(function () {
     }
     //#endregion
 
-    console.log("v1.1581");
+    console.log("v1.1582");
 });
