@@ -16,10 +16,11 @@ $(document).ready(function () {
     var userInstancesPath;
     var userMessagesPath;
     var userTodosPath;
+    var userBackupsPath;
+    var theBackupRetrievalHasBeenDone = false;
     var theLastMessage;
     var theLastTodo;
     var theCount = 0;
-    var geolocationListField = $("#geolocation-list");
     var geolocationStatusField = $("#geolocation-status");
     var map;
     //#endregion
@@ -80,6 +81,7 @@ $(document).ready(function () {
         });
         $("message-display").html(theEntriesBackup);
         $("todo-display").html(theTodosBackup);
+        theBackupRetrievalHasBeenDone = true;
     }
 
     function doAddEntry(automatic) {
@@ -170,37 +172,41 @@ $(document).ready(function () {
 
     //#region - listeners
     database.ref(userMessagesPath).on("value", function (snapshot) {
-        let theMessageDateTime = snapshot.child(userMessagesPath + "/dateTime/").val();
-        let theMessageUserName = snapshot.child(userMessagesPath + "/userName/").val();
-        let theMessageMessage = snapshot.child(userMessagesPath + "/message/").val();
-        let theCurrentLat = parseFloat(snapshot.child(userMessagesPath + "/currentLat/").val());
-        let theCurrentLong = parseFloat(snapshot.child(userMessagesPath + "/currentLong/").val());
-        let theCurrentGeolocation = snapshot.child(userMessagesPath + "/currentGeolocation/").val();
-        if (theMessageDateTime != null && theMessageDateTime + theMessageMessage != theLastMessage) {
-            $("#message-display").prepend("<span class='monospace'>" + theMessageDateTime + " <strong>" + theMessageUserName + "</strong>:</span> " + theMessageMessage);
-            theLastMessage = theMessageDateTime + theMessageMessage;
-        };
-        setTimeout(function () {
-            writeEntriesFieldBackup();
-        }, 500);
-        if ((theCurrentGeolocation != "lat: undefined, lng: undefined") && (theCurrentGeolocation != null)) {
-            console.log(theMessageDateTime, theMessageUserName, theCurrentGeolocation);
-            let theLatLong = { lat: theCurrentLat, lng: theCurrentLong };
-            placeMarker(theLatLong, theMessageUserName);
+        if (theBackupRetrievalHasBeenDone) {
+            let theMessageDateTime = snapshot.child(userMessagesPath + "/dateTime/").val();
+            let theMessageUserName = snapshot.child(userMessagesPath + "/userName/").val();
+            let theMessageMessage = snapshot.child(userMessagesPath + "/message/").val();
+            let theCurrentLat = parseFloat(snapshot.child(userMessagesPath + "/currentLat/").val());
+            let theCurrentLong = parseFloat(snapshot.child(userMessagesPath + "/currentLong/").val());
+            let theCurrentGeolocation = snapshot.child(userMessagesPath + "/currentGeolocation/").val();
+            if (theMessageDateTime != null && theMessageDateTime + theMessageMessage != theLastMessage) {
+                $("#message-display").prepend("<span class='monospace'>" + theMessageDateTime + " <strong>" + theMessageUserName + "</strong>:</span> " + theMessageMessage);
+                theLastMessage = theMessageDateTime + theMessageMessage;
+            };
+            setTimeout(function () {
+                writeEntriesFieldBackup();
+            }, 500);
+            if ((theCurrentGeolocation != "lat: undefined, lng: undefined") && (theCurrentGeolocation != null)) {
+                console.log(theMessageDateTime, theMessageUserName, theCurrentGeolocation);
+                let theLatLong = { lat: theCurrentLat, lng: theCurrentLong };
+                placeMarker(theLatLong, theMessageUserName);
+            };
         };
     }, function (errorObject) {
         console.log("entries-error: " + errorObject.code);
     });
 
     database.ref(userTodosPath).on("value", function (snapshot) {
-        let theTodoMessage = snapshot.child(userTodosPath + "/todo/").val();
-        if (theTodoMessage != theLastTodo) {
-            $("#todo-display").prepend(theTodoMessage);
-            theLastTodo = theTodoMessage;
+        if (theBackupRetrievalHasBeenDone) {
+            let theTodoMessage = snapshot.child(userTodosPath + "/todo/").val();
+            if (theTodoMessage != theLastTodo) {
+                $("#todo-display").prepend(theTodoMessage);
+                theLastTodo = theTodoMessage;
+            };
+            setTimeout(function () {
+                writeTodosFieldBackup();
+            }, 500);
         };
-        setTimeout(function () {
-            writeTodosFieldBackup();
-        }, 500);
     }, function (errorObject) {
         console.log("todos-error: " + errorObject.code);
     });
