@@ -392,15 +392,27 @@ $(document).ready(function () {
     function initializeDatabaseReferences() {
         let localStorageUIPath = window.localStorage.getItem("userInstancesPath");
         let localStorageLastURLParams = window.localStorage.getItem("theLastURLParameters");
+        userName = window.localStorage.getItem("userName");
         console.log("localStorageUIPath: " + localStorageUIPath);
         firebase.auth().onAuthStateChanged(function (user) {
             if (user) {
                 console.log("auth state changed: " + user.uid);
                 userID = user.uid; //when connecting by link, this will be the same user
-                let shortUserID = Math.floor(Math.random() * 1000 + 1000);
-                userName = prompt("Please enter a name to use for sending messages. If you don't choose one, we'll call you by this random number:", shortUserID);
-                if (userName == null || userName.trim() == "") {
-                    userName = shortUserID;
+                if (userName != "" && userName != null && userName != undefined) {
+                    let tempUserName = prompt("Please enter a name to use for sending messages. Last time, this was used:", userName);
+                    if (tempUserName !== null && tempUserName.trim() !== "") {
+                        userName = tempUserName;
+                    };
+                    window.localStorage.setItem("userName", userName);
+                    console.log("user name from LS: " + window.localStorage.getItem("userName"));
+                } else {
+                    let shortUserName = Math.floor(Math.random() * 1000 + 1000);
+                    userName = prompt("Please enter a name to use for sending messages. If you don't choose one, we'll call you by this random number:", shortUserName);
+                    if (userName == null || userName.trim() == "") {
+                        userName = shortUserName;
+                    };
+                    window.localStorage.setItem("userName", userName);
+                    console.log("user name from LS: " + window.localStorage.getItem("userName"));
                 };
                 // User is signed in.
                 userSignedIn = true;
