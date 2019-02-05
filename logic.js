@@ -236,10 +236,8 @@ $(document).ready(function () {
             if (theTempCount > 0) {
                 theCount = theTempCount;
             };
-            $("message-display").html(theEntriesBackup);
-            alert(theEntriesBackup);
-            $("todo-display").html(theTodosBackup);
-            alert(theTodosBackup);
+            $("#message-display").html(theEntriesBackup);
+            $("#todo-display").html(theTodosBackup);
             theBackupRetrievalHasBeenDone = true;
         };
     }, function (errorObject) {
@@ -535,5 +533,5 @@ $(document).ready(function () {
     }
     //#endregion
 
-    console.log("v1.1557");
+    console.log("v1.157");
 });
