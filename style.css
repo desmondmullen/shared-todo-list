@@ -173,23 +173,50 @@ hr {
         padding: 5px 0 0 0;
     }
     button {
+        font-size: small;
         padding: 0;
+        margin: 5px;
     }
     label {
         margin: 5px 0px 0px 0px;
     }
-    /* #signout-button {
-        text-align: center;
-        position: relative;
-        top: 0;
-        right: 0;
-        padding: 0;
-        margin: 0;
+    #message-display {
+        font-size: small;
+        display: block;
+        float: none;
+        height: 15%;
+        width: 98%;
+        margin-left: 1%;
+        color: white;
+        padding: 5px 10px;
     }
-    #signout-button button {
-        padding: 0;
-        margin: 0 10px;
-    } */
+    #todo-display {
+        font-size: small;
+        display: block;
+        float: none;
+        height: 25%;
+        width: 98%;
+        margin-left: 1%;
+        color: white;
+        padding: 5px 10px;
+    }
+    #todo-display::after {
+        content: "";
+        clear: both;
+        display: table;
+    }
+    #map {
+        margin-top: 1%;
+        font-size: small;
+        position: relative;
+        display: block;
+        float: none;
+        height: 35%;
+        width: 98%;
+        margin-left: 1%;
+        color: white;
+        padding: 5px 10px;
+    }
     #geolocation-status {
         position: relative;
         padding: 0;
