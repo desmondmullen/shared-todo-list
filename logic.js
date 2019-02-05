@@ -71,6 +71,8 @@ $(document).ready(function () {
 
     //#region - functions
     function retrieveBackups() {
+        console.log("retrieveBackups");
+        theBackupRetrievalHasBeenDone = true;
         database.ref(userBackupsPath).once("value", function (snapshot) {
             var theEntriesBackup = snapshot.child(userBackupsPath + "/entriesFieldContents/").val();
             var theTodosBackup = snapshot.child(userBackupsPath + "/todosFieldContents/").val();
@@ -80,8 +82,9 @@ $(document).ready(function () {
             };
         });
         $("message-display").html(theEntriesBackup);
+        alert(theEntriesBackup);
         $("todo-display").html(theTodosBackup);
-        theBackupRetrievalHasBeenDone = true;
+        alert(theTodosBackup);
     }
 
     function doAddEntry(automatic) {
@@ -110,11 +113,13 @@ $(document).ready(function () {
     };
 
     function writeEntriesFieldBackup() {
-        console.log("write entries field backup");
-        var theEntriesFieldContents = $("#message-display").html();
-        database.ref(userBackupsPath).update({
-            entriesFieldContents: theEntriesFieldContents,
-        });
+        if (theBackupRetrievalHasBeenDone) {
+            console.log("write entries field backup");
+            var theEntriesFieldContents = $("#message-display").html();
+            database.ref(userBackupsPath).update({
+                entriesFieldContents: theEntriesFieldContents,
+            });
+        };
     };
 
     function doAddTodo() {
@@ -133,11 +138,13 @@ $(document).ready(function () {
     };
 
     function writeTodosFieldBackup() {
-        console.log("write todos field backup");
-        var theTodosFieldContents = $("#todo-display").html();
-        database.ref(userBackupsPath).update({
-            todoFieldContents: theTodosFieldContents,
-        });
+        if (theBackupRetrievalHasBeenDone) {
+            console.log("write todos field backup");
+            var theTodosFieldContents = $("#todo-display").html();
+            database.ref(userBackupsPath).update({
+                todoFieldContents: theTodosFieldContents,
+            });
+        };
     };
 
     function doAddTodoNote() {
@@ -172,6 +179,7 @@ $(document).ready(function () {
 
     //#region - listeners
     database.ref(userMessagesPath).on("value", function (snapshot) {
+        console.log("messages - retrieval done: " + theBackupRetrievalHasBeenDone);
         if (theBackupRetrievalHasBeenDone) {
             let theMessageDateTime = snapshot.child(userMessagesPath + "/dateTime/").val();
             let theMessageUserName = snapshot.child(userMessagesPath + "/userName/").val();
@@ -197,6 +205,7 @@ $(document).ready(function () {
     });
 
     database.ref(userTodosPath).on("value", function (snapshot) {
+        console.log("todos - retrieval done: " + theBackupRetrievalHasBeenDone);
         if (theBackupRetrievalHasBeenDone) {
             let theTodoMessage = snapshot.child(userTodosPath + "/todo/").val();
             if (theTodoMessage != theLastTodo) {
