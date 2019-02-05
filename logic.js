@@ -240,7 +240,7 @@ $(document).ready(function () {
             if (user) {
                 console.log("auth state changed: " + user.uid);
                 userID = user.uid; //when connecting by link, this will be the same user
-                if (lastLocalStorageWrite + 30000 < Date.now() {
+                if (lastLocalStorageWrite + 30000 < Date.now()) {
                     if (userName != "" && userName != null && userName != undefined) {
                         let tempUserName = prompt("Please enter a name to use for sending messages. Last time, this was used:", userName);
                         if (tempUserName !== null && tempUserName.trim() !== "") {
@@ -362,5 +362,5 @@ $(document).ready(function () {
     }
     //#endregion
 
-    console.log("v1.1592");
+    console.log("v1.1593");
 });
