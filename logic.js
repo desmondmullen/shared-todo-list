@@ -221,6 +221,25 @@ $(document).ready(function () {
     }, function (errorObject) {
         console.log("todos-error: " + errorObject.code);
     });
+
+    database.ref(userBackupsPath).on("value", function (snapshot) {
+        console.log("backups value change - retrieval done: " + theBackupRetrievalHasBeenDone);
+        if (!theBackupRetrievalHasBeenDone) {
+            var theEntriesBackup = snapshot.child(userBackupsPath + "/entriesFieldContents/").val();
+            var theTodosBackup = snapshot.child(userBackupsPath + "/todosFieldContents/").val();
+            theTempCount = snapshot.child(userBackupsPath + "/theCount/").val();
+            if (theTempCount > 0) {
+                theCount = theTempCount;
+            };
+            $("message-display").html(theEntriesBackup);
+            alert(theEntriesBackup);
+            $("todo-display").html(theTodosBackup);
+            alert(theTodosBackup);
+            theBackupRetrievalHasBeenDone = true;
+        };
+    }, function (errorObject) {
+        console.log("todos-error: " + errorObject.code);
+    });
     //#endregion
 
     //#region - authorization
@@ -416,7 +435,6 @@ $(document).ready(function () {
                     window.localStorage.setItem("userName", userName);
                     console.log("user name from LS: " + window.localStorage.getItem("userName"));
                 };
-                console.log("here");
                 // User is signed in.
                 userSignedIn = true;
                 userIdentificationPath = "users/" + userID + "/identification";
@@ -433,18 +451,10 @@ $(document).ready(function () {
                     userTodosPath = userInstancesPath + "/todos";
                     userBackupsPath = userInstancesPath + "/backups";
                 }
-                console.log("there");
                 if (localStorageLastURLParams != null) {
                     turnURLIntoUserInstancesPath(localStorageLastURLParams);
                 };
-                console.log("before location");
                 getLocation();
-                console.log("after location");
-                setTimeout(function () {
-                    console.log("everywhere");
-
-                    retrieveBackups();
-                }, 500);
                 setTimeout(function () {
                     doAddEntry("connected");
                 }, 2000);
@@ -520,5 +530,5 @@ $(document).ready(function () {
     }
     //#endregion
 
-    console.log("v1.1553");
+    console.log("v1.1555");
 });
