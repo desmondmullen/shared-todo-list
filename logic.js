@@ -257,7 +257,7 @@ $(document).ready(function () {
                 // User is signed in.
                 if (window.location.href.indexOf("?") > 0) {
                     console.log("UIP before: " + userInstancesPath);
-                    turnURLIntoUserInstancesPath();
+                    turnURLIntoUserInstancesPath(window.location.href);
                     console.log("UIP after: " + userInstancesPath);
                 } else {
                     if (localStorageUIPath != null) {
@@ -349,5 +349,5 @@ $(document).ready(function () {
     }
     //#endregion
 
-    console.log("v1.1582");
+    console.log("v1.1585");
 });
