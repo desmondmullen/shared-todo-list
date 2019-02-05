@@ -58,11 +58,12 @@ $(document).ready(function () {
         theDeleteString = "#hr-" + theIdToDelete
         $(theDeleteString).remove();
     });
+
     $("body").delegate(".btn-add-note", "click", function (event) {
         let theName = event.target.id;
         let theIdToAddNote = theName.slice((theName.indexOf("-") + 1));
         let theAddNoteString = "#task-" + theIdToAddNote
-        // $(theAddNoteString).text($("#input-message")).val().trim();
+        $(theAddNoteString).append($("<div>").text($("#input-message").val().trim()));
         alert("need yo make this work");
         $("#input-message").val("");
     });
@@ -140,7 +141,6 @@ $(document).ready(function () {
 
     function doAddTodoNote() {
         let todaysDate = new Date().toLocaleDateString("en-US");
-        let currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         console.log("do add todo note:" + automatic + ", userID is: " + userID);
         var todoNote = $("#input-message").val().trim() + "<br>";
         database.ref(userTodosPath).set({
