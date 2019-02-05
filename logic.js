@@ -341,7 +341,7 @@ $(document).ready(function () {
     });
 
     function turnURLIntoUserInstancesPath(theLink) {
-        if (theLink == null || path == "" || path == undefined) {
+        if (theLink == null || theLink == "" || theLink == undefined) {
             theLink = window.location.href;
         }
         window.localStorage.setItem("theLastURLParameters", theLink);
@@ -520,5 +520,5 @@ $(document).ready(function () {
     }
     //#endregion
 
-    console.log("v1.1552");
+    console.log("v1.1553");
 });
