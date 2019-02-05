@@ -182,9 +182,9 @@ $(document).ready(function () {
 
     function turnURLIntoUserInstancesPath(theLink) {
         console.log("turn URL: " + theLink);
-        if (theLink == null || theLink == "" || theLink == undefined) {
-            theLink = window.location.href;
-        }
+        // if (theLink == null || theLink == "" || theLink == undefined) {
+        //     theLink = window.location.href;
+        // }
         window.localStorage.setItem("theLastURLParameters", theLink);
         window.history.replaceState({}, document.title, window.location.href.split('?')[0]);//cleans up sign-in link params
         let theInstancesPath = (theLink.substring((theLink.indexOf("?") + 1), theLink.indexOf("&")));
@@ -195,7 +195,6 @@ $(document).ready(function () {
         } else {
             console.log("new path was null, existing path is: " + userInstancesPath);
         };
-        location = location; //should reload once
     };
 
     function signOut() {
@@ -260,6 +259,7 @@ $(document).ready(function () {
                     console.log("UIP before: " + userInstancesPath);
                     turnURLIntoUserInstancesPath(window.location.href);
                     console.log("UIP after: " + userInstancesPath);
+                    location = location;
                 } else {
                     if (localStorageUIPath != null) {
                         userInstancesPath = localStorageUIPath;
@@ -350,5 +350,5 @@ $(document).ready(function () {
     }
     //#endregion
 
-    console.log("v1.1586");
+    console.log("v1.1587");
 });
