@@ -20,7 +20,7 @@ $(document).ready(function () {
     var map;
     var localStorageLastURLParams;
     var localStorageUIPath;
-    var lastLocalStorageWrite;
+    var timeCheck;
     var authStateChanged = false;
     var turnedURLToInstancePath; //this is true if moot
     //#endregion
@@ -228,6 +228,19 @@ $(document).ready(function () {
         alert('Error: ' + errorMessage);
         console.log("handle error: " + errorCode, errorMessage);
     }
+
+    function checkTheTime() {
+        timeCheck = parseInt(window.localStorage.getItem("timeCheck"));
+        let rightNow = Date.now();
+        window.localStorage.setItem("timeCheck", rightNow + 3000);
+        if (timeCheck < rightNow) {
+            console.log("timeCheck - been more than 3 seconds.");
+            return true;
+        } else {
+            console.log("timeCheck - been less than 3 seconds.");
+            return false;
+        };
+    };
     //#endregion
 
     //#region - initialize database
@@ -235,13 +248,13 @@ $(document).ready(function () {
         localStorageUIPath = window.localStorage.getItem("userInstancesPath");
         localStorageLastURLParams = window.localStorage.getItem("theLastURLParameters");
         userName = window.localStorage.getItem("userName");
-        lastLocalStorageWrite = window.localStorage.getItem("userName");
+        timeCheck = window.localStorage.getItem("userName");
         console.log("localStorageUIPath: " + localStorageUIPath);
         firebase.auth().onAuthStateChanged(function (user) {
             if (user) {
                 console.log("auth state changed: " + user.uid);
                 userID = user.uid; //when connecting by link, this will be the same user
-                if (lastLocalStorageWrite + 30000 < Date.now()) {
+                if (checkTheTime()) { // if it's been more than 3 seconds we'll ask again
                     if (userName != "" && userName != null && userName != undefined) {
                         let tempUserName = prompt("Please enter a name to use for sending messages. Last time, this was used:", userName);
                         if (tempUserName !== null && tempUserName.trim() !== "") {
@@ -285,8 +298,8 @@ $(document).ready(function () {
                     turnURLIntoUserInstancesPath(localStorageLastURLParams);
                 };
                 authStateChanged = true;
-                if (lastLocalStorageWrite + 3000 < (+new Date())) {
-                    getLocation(); //correct to do this if?
+                if (checkTheTime()) {// more than 3 seconds
+                    getLocation();
                 }
                 setTimeout(function () {
                     doAddEntry("connected");
@@ -363,5 +376,5 @@ $(document).ready(function () {
     }
     //#endregion
 
-    console.log("v1.1593");
+    console.log("v1.1595");
 });
