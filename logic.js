@@ -437,7 +437,9 @@ $(document).ready(function () {
                 if (localStorageLastURLParams != null) {
                     turnURLIntoUserInstancesPath(localStorageLastURLParams);
                 };
+                console.log("before location");
                 getLocation();
+                console.log("after location");
                 setTimeout(function () {
                     console.log("everywhere");
 
@@ -518,5 +520,5 @@ $(document).ready(function () {
     }
     //#endregion
 
-    console.log("v1.1551");
+    console.log("v1.1552");
 });
