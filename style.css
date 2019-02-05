@@ -96,6 +96,7 @@ hr {
 }
 
 #message-display {
+    overflow: auto;
     float: left;
     width: 48%;
     margin-left: 1%;
@@ -107,6 +108,7 @@ hr {
 }
 
 #todo-display {
+    overflow: auto;
     float: left;
     width: 48%;
     margin-left: 1%;
