@@ -414,6 +414,7 @@ $(document).ready(function () {
                     window.localStorage.setItem("userName", userName);
                     console.log("user name from LS: " + window.localStorage.getItem("userName"));
                 };
+                console.log("here");
                 // User is signed in.
                 userSignedIn = true;
                 userIdentificationPath = "users/" + userID + "/identification";
@@ -430,11 +431,14 @@ $(document).ready(function () {
                     userTodosPath = userInstancesPath + "/todos";
                     userBackupsPath = userInstancesPath + "/backups";
                 }
+                console.log("there");
                 if (localStorageLastURLParams != null) {
                     turnURLIntoUserInstancesPath(localStorageLastURLParams);
                 };
                 getLocation();
                 setTimeout(function () {
+                    console.log("everywhere");
+
                     retrieveBackups();
                 }, 500);
                 setTimeout(function () {
@@ -512,5 +516,5 @@ $(document).ready(function () {
     }
     //#endregion
 
-    console.log("v1.152");
+    console.log("v1.155");
 });
