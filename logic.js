@@ -257,9 +257,10 @@ $(document).ready(function () {
                         window.localStorage.setItem("userName", userName);
                         window.localStorage.setItem("lastWrite", (+new Date()));
                         console.log("user name after prompt for new. LS: " + window.localStorage.getItem("userName"));
-                    } else {
-                        console.log("user name from LS - no prompting: " + window.localStorage.getItem("userName"));
                     };
+                } else {
+                    console.log("user name from LS - no prompting: " + window.localStorage.getItem("userName"));
+                    // };
                 };
 
                 // User is signed in.
@@ -360,5 +361,5 @@ $(document).ready(function () {
     }
     //#endregion
 
-    console.log("v1.1588");
+    console.log("v1.159");
 });
