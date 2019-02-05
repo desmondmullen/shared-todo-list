@@ -89,7 +89,7 @@ $(document).ready(function () {
 
     function writeEntriesFieldBackup() {
         if (theBackupRetrievalHasBeenDone) {
-            console.log("write entries field backup");
+            console.log("write entries field backup to: " + userBackupsPath);
             var theEntriesFieldContents = $("#message-display").html();
             database.ref(userBackupsPath).update({
                 entriesFieldContents: theEntriesFieldContents,
@@ -113,7 +113,7 @@ $(document).ready(function () {
 
     function writeTodosFieldBackup() {
         if (theBackupRetrievalHasBeenDone) {
-            console.log("write todos field backup");
+            console.log("write todos field backup to: " + userBackupsPath);
             var theTodosFieldContents = $("#todo-display").html();
             database.ref(userBackupsPath).update({
                 todosFieldContents: theTodosFieldContents,
@@ -138,7 +138,7 @@ $(document).ready(function () {
 
     //#region - listeners
     database.ref(userBackupsPath).on("value", function (snapshot) {
-        console.log("backups value change - retrieval done: " + theBackupRetrievalHasBeenDone);
+        console.log("backups value change - retrieval done: " + theBackupRetrievalHasBeenDone + ". path: " + userBackupsPath);
         if (!theBackupRetrievalHasBeenDone) {
             var theEntriesBackup = snapshot.child(userBackupsPath + "/entriesFieldContents/").val();
             var theTodosBackup = snapshot.child(userBackupsPath + "/todosFieldContents/").val();
@@ -165,9 +165,9 @@ $(document).ready(function () {
             theConnection.onDisconnect().remove();
         };
     });
-    connectionsRef.on("value", function (connectionsSnapshot) {
-        console.log("number online: " + connectionsSnapshot.numChildren());
-    }); // Number of online users is the number of objects in the presence list.
+    // connectionsRef.on("value", function (connectionsSnapshot) {
+    //     console.log("number online: " + connectionsSnapshot.numChildren());
+    // }); // Number of online users is the number of objects in the presence list.
 
     firebase.auth().signInAnonymously().catch(function (error) {
         console.log("sign in anonymously");
@@ -344,5 +344,5 @@ $(document).ready(function () {
     }
     //#endregion
 
-    console.log("v1.1577");
+    console.log("v1.158");
 });
