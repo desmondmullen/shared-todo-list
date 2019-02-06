@@ -191,7 +191,7 @@ $(document).ready(function () {
     });
 
     function turnURLIntoUserInstancesPath(theLink) {
-        console.log("old path: " + decodeURIComponent(theInstancesPath));
+        console.log("old path: " + decodeURIComponent(userInstancesPath));
         console.log("turn URL: " + theLink);
         // if (theLink == null || theLink == "" || theLink == undefined) {
         //     theLink = window.location.href;
@@ -396,5 +396,5 @@ $(document).ready(function () {
     }
     //#endregion
 
-    console.log("v1.1675");
+    console.log("v1.1676");
 });
