@@ -92,7 +92,7 @@ $(document).ready(function () {
             //         var entryMessage = "[disconnected]<br>";
             //     };
             // };
-            $("#message-display").prepend(todaysDate + " " + currentTime + " <strong>" + userName + "</strong>:<span class=\"monospace\">" + entryMessage + "</span>");
+            $("#message-display").prepend(todaysDate + " " + currentTime + " <strong>" + userName + "</strong>: <span class=\"monospace\">" + entryMessage + "</span>");
             theLastMessage = todaysDate + " " + currentTime + entryMessage;
             writeEntriesFieldBackup();
             $("#input-message").val("");
@@ -395,5 +395,5 @@ $(document).ready(function () {
     }
     //#endregion
 
-    console.log("v1.1671");
+    console.log("v1.1672");
 });
