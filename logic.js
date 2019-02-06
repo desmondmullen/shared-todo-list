@@ -191,12 +191,12 @@ $(document).ready(function () {
     });
 
     function turnURLIntoUserInstancesPath(theLink) {
+        console.log("old path: " + decodeURIComponent(theInstancesPath));
         console.log("turn URL: " + theLink);
         // if (theLink == null || theLink == "" || theLink == undefined) {
         //     theLink = window.location.href;
         // }
         // window.localStorage.setItem("theLastURLParameters", theLink);
-        window.history.replaceState({}, document.title, window.location.href.split('?')[0]);//cleans up sign-in link params
         let theInstancesPath = (theLink.substring((theLink.indexOf("?") + 1), theLink.indexOf("&")));
         if (theInstancesPath != null) {
             userInstancesPath = decodeURIComponent(theInstancesPath);
@@ -209,6 +209,7 @@ $(document).ready(function () {
         } else {
             console.log("new path was null, existing path is: " + userInstancesPath);
         };
+        window.history.replaceState({}, document.title, window.location.href.split('?')[0]);//cleans up sign-in link params
     };
 
     function signOut() {
@@ -395,5 +396,5 @@ $(document).ready(function () {
     }
     //#endregion
 
-    console.log("v1.1672");
+    console.log("v1.1675");
 });
