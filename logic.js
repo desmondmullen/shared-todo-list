@@ -265,6 +265,10 @@ $(document).ready(function () {
         firebase.auth().onAuthStateChanged(function (user) {
             if (user) {
                 console.log("auth state changed: " + user.uid);
+                if (window.location.href.indexOf("?") > 0) {
+                    window.localStorage.removeItem("userInstancesPath");
+                    window.localStorage.removeItem("theLastURLParameters");
+                };
                 userID = user.uid; //when connecting by link, this will be the same user
                 if (checkTheTime()) { // if it's been more than 3 seconds we'll ask again
                     if (userName != "" && userName != null && userName != undefined) {
@@ -294,8 +298,6 @@ $(document).ready(function () {
                 if (window.location.href.indexOf("?") > 0) {
                     console.log("UIP before: " + userInstancesPath);
                     turnURLIntoUserInstancesPath(window.location.href);
-                    localStorageLastURLParams = null;
-                    localStorageUIPath = null;
                     console.log("UIP after: " + userInstancesPath);
                     location = location;
                 } else {
@@ -303,6 +305,9 @@ $(document).ready(function () {
                         userInstancesPath = localStorageUIPath;
                     } else {
                         userInstancesPath = "users/" + userID + "/instances/" + (+new Date());
+                        window.localStorage.setItem("userInstancesPath", userInstancesPath);
+                        window.localStorage.removeItem("theLastURLParameters");
+
                     }
                     userMessagesPath = userInstancesPath + "/messages";
                     userTodosPath = userInstancesPath + "/todos";
@@ -390,5 +395,5 @@ $(document).ready(function () {
     }
     //#endregion
 
-    console.log("v1.165");
+    console.log("v1.167");
 });
