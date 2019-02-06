@@ -18,8 +18,6 @@ $(document).ready(function () {
     var theCount = 0;
     var geolocationStatusField = $("#geolocation-status");
     var map;
-    var localStorageLastURLParams;
-    var localStorageUIPath;
     var timeCheck;
     var authStateChanged = false;
     var turnedURLToInstancePath; //this is true if moot
@@ -193,18 +191,12 @@ $(document).ready(function () {
     function turnURLIntoUserInstancesPath(theLink) {
         console.log("old path: " + decodeURIComponent(userInstancesPath));
         console.log("turn URL: " + theLink);
-        // if (theLink == null || theLink == "" || theLink == undefined) {
-        //     theLink = window.location.href;
-        // }
-        // window.localStorage.setItem("theLastURLParameters", theLink);
         let theInstancesPath = (theLink.substring((theLink.indexOf("?") + 1), theLink.indexOf("&")));
         if (theInstancesPath != null) {
             userInstancesPath = decodeURIComponent(theInstancesPath);
             userMessagesPath = userInstancesPath + "/messages";
             userTodosPath = userInstancesPath + "/todos";
             userBackupsPath = userInstancesPath + "/backups";
-            window.localStorage.setItem("userInstancesPath", userInstancesPath);
-            window.localStorage.setItem("theLastURLParameters", theLink);
             console.log("new path: " + decodeURIComponent(theInstancesPath));
         } else {
             console.log("new path was null, existing path is: " + userInstancesPath);
@@ -215,7 +207,6 @@ $(document).ready(function () {
     function signOut() {
         doAddEntry("disconnected");
         firebase.auth().signOut();
-        window.localStorage.removeItem("userInstancesPath");
         emptyInputFields();
         window.history.replaceState({}, document.title, window.location.href.split('?')[0]);//cleans up sign-in link params
         location = location;
@@ -228,7 +219,6 @@ $(document).ready(function () {
             'handleCodeInApp': true // This must be true.
         };
         firebase.auth().sendSignInLinkToEmail(theEmailAddress, actionCodeSettings).then(function () {
-            window.localStorage.setItem("userInstancesPath", userInstancesPath);
             alert('An email was sent to ' + theEmailAddress + '. This instance can be accessed by anyone using the link in that email.');
         }).catch(function (error) {
             handleError(error);
@@ -258,18 +248,11 @@ $(document).ready(function () {
 
     //#region - initialize database
     function initializeDatabaseReferences() {
-        localStorageUIPath = window.localStorage.getItem("userInstancesPath");
-        localStorageLastURLParams = window.localStorage.getItem("theLastURLParameters");
         userName = window.localStorage.getItem("userName");
-        timeCheck = window.localStorage.getItem("userName");
-        console.log("localStorageUIPath: " + localStorageUIPath);
+        timeCheck = window.localStorage.getItem("timeCheck");
         firebase.auth().onAuthStateChanged(function (user) {
             if (user) {
                 console.log("auth state changed: " + user.uid);
-                if (window.location.href.indexOf("?") > 0) {
-                    window.localStorage.removeItem("userInstancesPath");
-                    window.localStorage.removeItem("theLastURLParameters");
-                };
                 userID = user.uid; //when connecting by link, this will be the same user
                 if (checkTheTime()) { // if it's been more than 3 seconds we'll ask again
                     if (userName != "" && userName != null && userName != undefined) {
@@ -287,7 +270,7 @@ $(document).ready(function () {
                         };
                         let theLastWrite = Date.now()
                         window.localStorage.setItem("userName", userName);
-                        window.localStorage.setItem("lastWrite", theLastWrite);
+                        window.localStorage.setItem("timeCheck", timeCheck);
                         console.log("user name after prompt for new. LS: " + window.localStorage.getItem("userName"));
                     };
                 } else {
@@ -302,21 +285,11 @@ $(document).ready(function () {
                     console.log("UIP after: " + userInstancesPath);
                     location = location;
                 } else {
-                    if (localStorageUIPath != null) {
-                        userInstancesPath = localStorageUIPath;
-                    } else {
-                        userInstancesPath = "users/" + userID + "/instances/" + (+new Date());
-                        window.localStorage.setItem("userInstancesPath", userInstancesPath);
-                        window.localStorage.removeItem("theLastURLParameters");
-
-                    }
+                    userInstancesPath = "users/" + userID + "/instances/" + (+new Date());
                     userMessagesPath = userInstancesPath + "/messages";
                     userTodosPath = userInstancesPath + "/todos";
                     userBackupsPath = userInstancesPath + "/backups";
                 }
-                if (localStorageLastURLParams != null) {
-                    turnURLIntoUserInstancesPath(localStorageLastURLParams);
-                };
                 authStateChanged = true;
                 if (checkTheTime()) {// more than 3 seconds
                     getLocation();
@@ -396,5 +369,5 @@ $(document).ready(function () {
     }
     //#endregion
 
-    console.log("v1.1676");
+    console.log("v1.1677");
 });
