@@ -151,18 +151,18 @@ $(document).ready(function () {
     //#region - listeners
     database.ref(userBackupsPath).on("value", function (snapshot) {
         console.log("backups value change - retrieval done: " + theBackupRetrievalHasBeenDone + ". path: " + userBackupsPath);
-        if (!theBackupRetrievalHasBeenDone && authStateChanged) {
-            console.log("doing backup retrieval: " + userBackupsPath);
-            var theEntriesBackup = snapshot.child(userBackupsPath + "/entriesFieldContents/").val();
-            var theTodosBackup = snapshot.child(userBackupsPath + "/todosFieldContents/").val();
-            theTempCount = snapshot.child(userBackupsPath + "/theCount/").val();
-            if (theTempCount > 0) {
-                theCount = theTempCount;
-            };
-            $("#message-display").html(theEntriesBackup);
-            $("#todo-display").html(theTodosBackup);
-            theBackupRetrievalHasBeenDone = true;
+        // if (!theBackupRetrievalHasBeenDone && authStateChanged) {
+        console.log("doing backup retrieval: " + userBackupsPath);
+        var theEntriesBackup = snapshot.child(userBackupsPath + "/entriesFieldContents/").val();
+        var theTodosBackup = snapshot.child(userBackupsPath + "/todosFieldContents/").val();
+        theTempCount = snapshot.child(userBackupsPath + "/theCount/").val();
+        if (theTempCount > 0) {
+            theCount = theTempCount;
         };
+        $("#message-display").html(theEntriesBackup);
+        $("#todo-display").html(theTodosBackup);
+        theBackupRetrievalHasBeenDone = true;
+        // };
     }, function (errorObject) {
         console.log("todos-error: " + errorObject.code);
     });
@@ -395,5 +395,5 @@ $(document).ready(function () {
     }
     //#endregion
 
-    console.log("v1.167");
+    console.log("v1.1671");
 });
