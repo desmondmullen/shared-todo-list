@@ -195,12 +195,16 @@ $(document).ready(function () {
         // if (theLink == null || theLink == "" || theLink == undefined) {
         //     theLink = window.location.href;
         // }
-        window.localStorage.setItem("theLastURLParameters", theLink);
+        // window.localStorage.setItem("theLastURLParameters", theLink);
         window.history.replaceState({}, document.title, window.location.href.split('?')[0]);//cleans up sign-in link params
         let theInstancesPath = (theLink.substring((theLink.indexOf("?") + 1), theLink.indexOf("&")));
         if (theInstancesPath != null) {
             userInstancesPath = decodeURIComponent(theInstancesPath);
+            userMessagesPath = userInstancesPath + "/messages";
+            userTodosPath = userInstancesPath + "/todos";
             userBackupsPath = userInstancesPath + "/backups";
+            window.localStorage.setItem("userInstancesPath", userInstancesPath);
+            window.localStorage.setItem("theLastURLParameters", theLink);
             console.log("new path: " + decodeURIComponent(theInstancesPath));
         } else {
             console.log("new path was null, existing path is: " + userInstancesPath);
@@ -291,6 +295,7 @@ $(document).ready(function () {
                     console.log("UIP before: " + userInstancesPath);
                     turnURLIntoUserInstancesPath(window.location.href);
                     localStorageLastURLParams = null;
+                    localStorageUIPath = null;
                     console.log("UIP after: " + userInstancesPath);
                     location = location;
                 } else {
@@ -385,5 +390,5 @@ $(document).ready(function () {
     }
     //#endregion
 
-    console.log("v1.161");
+    console.log("v1.165");
 });
