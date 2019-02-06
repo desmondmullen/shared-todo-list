@@ -290,6 +290,7 @@ $(document).ready(function () {
                 if (window.location.href.indexOf("?") > 0) {
                     console.log("UIP before: " + userInstancesPath);
                     turnURLIntoUserInstancesPath(window.location.href);
+                    localStorageLastURLParams = null;
                     console.log("UIP after: " + userInstancesPath);
                     location = location;
                 } else {
@@ -384,5 +385,5 @@ $(document).ready(function () {
     }
     //#endregion
 
-    console.log("v1.16");
+    console.log("v1.161");
 });
