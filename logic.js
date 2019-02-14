@@ -23,6 +23,7 @@ var turnedURLToInstancePath; //this is true if moot
 var userLatitude;
 var userLongitude;
 var initMapLatLong;
+var theLastLocation;
 //#endregion
 
 function initMap() {
@@ -204,13 +205,14 @@ $(document).ready(function () {
         let theCurrentLong = parseFloat(snapshot.child(userLocationPath + "/currentLong/").val());
         let theCurrentGeolocation = snapshot.child(userLocationPath + "/currentGeolocation/").val();
         if (theLocationDateTime != null && theLocationDateTime + theCurrentLong != theLastLocation) {
+            if ((theCurrentGeolocation != "lat: undefined, lng: undefined") && (theCurrentGeolocation != null)) {
+                console.log(theLocationDateTime, theLocationUserName, theCurrentGeolocation);
+                let theLatLong = { lat: theCurrentLat, lng: theCurrentLong };
+                placeMarker(theLatLong, theLocationUserName + ": " + theLocationDateTime);
+            };
+            theLastLocation = theLocationDateTime + theCurrentLong;
+        };
 
-        };
-        if ((theCurrentGeolocation != "lat: undefined, lng: undefined") && (theCurrentGeolocation != null)) {
-            console.log(theLocationDateTime, theLocationUserName, theCurrentGeolocation);
-            let theLatLong = { lat: theCurrentLat, lng: theCurrentLong };
-            placeMarker(theLatLong, theLocationUserName + ": " + theLocationDateTime);
-        };
     }, function (errorObject) {
         console.log("location-error: " + errorObject.code);
     });
@@ -396,5 +398,5 @@ $(document).ready(function () {
     }
     //#endregion
 
-    console.log("v1.1777");
+    console.log("v1.179");
 });
