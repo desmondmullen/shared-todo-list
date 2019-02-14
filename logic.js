@@ -51,7 +51,7 @@ function placeMarker(theLatLong, title) {
 
 $(document).ready(function () {
     console.log("document ready");
-    var geolocationStatusField = $("#geolocation-status");
+    geolocationStatusField = $("#geolocation-status");
 
     //#region - buttons
     $("#add-entry").on("click", function (event) {
@@ -366,5 +366,5 @@ $(document).ready(function () {
     }
     //#endregion
 
-    console.log("v1.1771");
+    console.log("v1.1772");
 });
