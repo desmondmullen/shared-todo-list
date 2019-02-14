@@ -24,6 +24,7 @@ var userLatitude;
 var userLongitude;
 var initMapLatLong;
 var theLastLocation;
+var geolocationStatusField;
 //#endregion
 
 function initMap() {
@@ -37,8 +38,17 @@ function initMap() {
                 center: userLatLong
             });
             placeMarker(userLatLong, "You are here");
-            geolocationStatusField.text("Latitude: " + userLatitude + ", Longitude: " + userLongitude);
-
+            if (geolocationStatusField != undefined && userLocationPath != undefined) {
+                geolocationStatusField.text("Latitude: " + userLatitude + ", Longitude: " + userLongitude);
+                database.ref(userLocationPath).set({
+                    dateTime: todaysDate + " " + currentTime,
+                    userName: userName,
+                    currentLat: userLatitude,
+                    currentLong: userLongitude,
+                    currentGeolocation: "lat: " + userLatitude +
+                        ", lng: " + userLongitude
+                });
+            };
         }, 500);
     };
 };
@@ -128,7 +138,6 @@ $(document).ready(function () {
             currentGeolocation: "lat: " + userLatitude +
                 ", lng: " + userLongitude
         });
-
     };
 
     function writeEntriesFieldBackup() {
@@ -398,5 +407,5 @@ $(document).ready(function () {
     }
     //#endregion
 
-    console.log("v1.179");
+    console.log("v1.1791");
 });
