@@ -189,8 +189,14 @@ $(document).ready(function () {
     });
 
     function turnURLIntoUserInstancesPath(theLink) {
-        console.log("old path: " + decodeURIComponent(userInstancesPath));
-        console.log("turn URL: " + theLink);
+        // console.log("old path: " + decodeURIComponent(userInstancesPath));
+        // console.log("turn URL: " + theLink);
+        // let theInstancesPath = (theLink.substring((theLink.indexOf("?") + 1), theLink.indexOf("&")));
+        if (theLink == null || path == "" || path == undefined) {
+            theLink = window.location.href;
+        }
+        window.localStorage.setItem("theLastURLParameters", theLink);
+        window.history.replaceState({}, document.title, window.location.href.split('?')[0]);//cleans up sign-in link params
         let theInstancesPath = (theLink.substring((theLink.indexOf("?") + 1), theLink.indexOf("&")));
         if (theInstancesPath != null) {
             userInstancesPath = decodeURIComponent(theInstancesPath);
@@ -219,6 +225,7 @@ $(document).ready(function () {
             'handleCodeInApp': true // This must be true.
         };
         firebase.auth().sendSignInLinkToEmail(theEmailAddress, actionCodeSettings).then(function () {
+            window.localStorage.setItem("userInstancesPath", userInstancesPath);
             alert('An email was sent to ' + theEmailAddress + '. This instance can be accessed by anyone using the link in that email.');
         }).catch(function (error) {
             handleError(error);
@@ -369,5 +376,5 @@ $(document).ready(function () {
     }
     //#endregion
 
-    console.log("v1.1677");
+    console.log("v1.17");
 });
