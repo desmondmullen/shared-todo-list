@@ -50,7 +50,6 @@ function placeMarker(theLatLong, title) {
 }
 
 $(document).ready(function () {
-    console.log("document ready");
     geolocationStatusField = $("#geolocation-status");
 
     //#region - buttons
