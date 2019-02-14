@@ -119,6 +119,15 @@ $(document).ready(function () {
             writeEntriesFieldBackup();
             $("#input-message").val("");
         };
+        database.ref(userLocationPath).set({
+            dateTime: todaysDate + " " + currentTime,
+            userName: userName,
+            currentLat: userLatitude,
+            currentLong: userLongitude,
+            currentGeolocation: "lat: " + userLatitude +
+                ", lng: " + userLongitude
+        });
+
     };
 
     function writeEntriesFieldBackup() {
@@ -187,6 +196,25 @@ $(document).ready(function () {
     }, function (errorObject) {
         console.log("todos-error: " + errorObject.code);
     });
+
+    database.ref(userLocationPath).on("value", function (snapshot) {
+        let theLocationDateTime = snapshot.child(userLocationPath + "/dateTime/").val();
+        let theLocationUserName = snapshot.child(userLocationPath + "/userName/").val();
+        let theCurrentLat = parseFloat(snapshot.child(userLocationPath + "/currentLat/").val());
+        let theCurrentLong = parseFloat(snapshot.child(userLocationPath + "/currentLong/").val());
+        let theCurrentGeolocation = snapshot.child(userLocationPath + "/currentGeolocation/").val();
+        if (theLocationDateTime != null && theLocationDateTime + theCurrentLong != theLastLocation) {
+
+        };
+        if ((theCurrentGeolocation != "lat: undefined, lng: undefined") && (theCurrentGeolocation != null)) {
+            console.log(theLocationDateTime, theLocationUserName, theCurrentGeolocation);
+            let theLatLong = { lat: theCurrentLat, lng: theCurrentLong };
+            placeMarker(theLatLong, theLocationUserName + ": " + theLocationDateTime);
+        };
+    }, function (errorObject) {
+        console.log("location-error: " + errorObject.code);
+    });
+
     //#endregion
 
     //#region - connections
@@ -220,6 +248,7 @@ $(document).ready(function () {
             userMessagesPath = userInstancesPath + "/messages";
             userTodosPath = userInstancesPath + "/todos";
             userBackupsPath = userInstancesPath + "/backups";
+            userLocationPath = userInstancesPath + "/location";
             console.log("new path: " + decodeURIComponent(theInstancesPath));
         } else {
             console.log("new path was null, existing path is: " + userInstancesPath);
@@ -288,6 +317,7 @@ $(document).ready(function () {
                     userMessagesPath = userInstancesPath + "/messages";
                     userTodosPath = userInstancesPath + "/todos";
                     userBackupsPath = userInstancesPath + "/backups";
+                    userLocationPath = userInstancesPath + "/location";
                 }
 
                 if (checkTheTime()) { // if it's been more than 3 seconds we'll ask again
@@ -366,5 +396,5 @@ $(document).ready(function () {
     }
     //#endregion
 
-    console.log("v1.1772");
+    console.log("v1.1775");
 });
