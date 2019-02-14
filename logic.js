@@ -192,7 +192,7 @@ $(document).ready(function () {
         // console.log("old path: " + decodeURIComponent(userInstancesPath));
         // console.log("turn URL: " + theLink);
         // let theInstancesPath = (theLink.substring((theLink.indexOf("?") + 1), theLink.indexOf("&")));
-        if (theLink == null || path == "" || path == undefined) {
+        if (theLink == null || theLink == "" || theLink == undefined) {
             theLink = window.location.href;
         }
         window.localStorage.setItem("theLastURLParameters", theLink);
@@ -376,5 +376,5 @@ $(document).ready(function () {
     }
     //#endregion
 
-    console.log("v1.17");
+    console.log("v1.171");
 });
