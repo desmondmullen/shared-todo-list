@@ -132,14 +132,16 @@ $(document).ready(function () {
             writeEntriesFieldBackup();
             $("#input-message").val("");
         };
-        database.ref(userLocationPath).set({
-            dateTime: todaysDate + " " + currentTime,
-            userName: userName,
-            currentLat: userLatitude,
-            currentLong: userLongitude,
-            currentGeolocation: "lat: " + userLatitude +
-                ", lng: " + userLongitude
-        });
+        if (userName != undefined && userLatitude != undefined && userLongitude != undefined) {
+            database.ref(userLocationPath).set({
+                dateTime: todaysDate + " " + currentTime,
+                userName: userName,
+                currentLat: userLatitude,
+                currentLong: userLongitude,
+                currentGeolocation: "lat: " + userLatitude +
+                    ", lng: " + userLongitude
+            });
+        };
     };
 
     function writeEntriesFieldBackup() {
@@ -421,5 +423,5 @@ $(document).ready(function () {
     };
     //#endregion
 
-    console.log("v1.18");
+    console.log("v1.181");
 });
