@@ -411,10 +411,15 @@ $(document).ready(function () {
         userLongitude = parseFloat(position.coords.longitude);
         if (initMapLatLong != userLatitude, userLongitude) {
             console.log("redoing initMap: " + initMapLatLong + " / " + userLatitude, userLongitude);
-            initMap();
-        }
-    }
+            if (map === undefined) {
+                initMap();
+            } else {
+                userLatLong = { lat: userLatitude, lng: userLongitude };
+                placeMarker(userLatLong, "You are here");
+            };
+        };
+    };
     //#endregion
 
-    console.log("v1.1797");
+    console.log("v1.18");
 });
