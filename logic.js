@@ -13,6 +13,7 @@ var userID;
 var userName;
 var userInstancesPath;
 var userBackupsPath;
+var userLocationPath;
 var theBackupRetrievalHasBeenDone = false;
 var theCount = 0;
 var map;
@@ -395,5 +396,5 @@ $(document).ready(function () {
     }
     //#endregion
 
-    console.log("v1.1775");
+    console.log("v1.1777");
 });
