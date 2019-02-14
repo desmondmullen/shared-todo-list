@@ -261,6 +261,18 @@ $(document).ready(function () {
             if (user) {
                 console.log("auth state changed: " + user.uid);
                 userID = user.uid; //when connecting by link, this will be the same user
+                if (window.location.href.indexOf("?") > 0) {
+                    console.log("UIP before: " + userInstancesPath);
+                    turnURLIntoUserInstancesPath(window.location.href);
+                    console.log("UIP after: " + userInstancesPath);
+                    location = location;
+                } else {
+                    userInstancesPath = "users/" + userID + "/instances/" + (+new Date());
+                    userMessagesPath = userInstancesPath + "/messages";
+                    userTodosPath = userInstancesPath + "/todos";
+                    userBackupsPath = userInstancesPath + "/backups";
+                }
+
                 if (checkTheTime()) { // if it's been more than 3 seconds we'll ask again
                     if (userName != "" && userName != null && userName != undefined) {
                         let tempUserName = prompt("Please enter a name to use for sending messages. Last time, this was used:", userName);
@@ -286,17 +298,6 @@ $(document).ready(function () {
                 };
 
                 // User is signed in.
-                if (window.location.href.indexOf("?") > 0) {
-                    console.log("UIP before: " + userInstancesPath);
-                    turnURLIntoUserInstancesPath(window.location.href);
-                    console.log("UIP after: " + userInstancesPath);
-                    location = location;
-                } else {
-                    userInstancesPath = "users/" + userID + "/instances/" + (+new Date());
-                    userMessagesPath = userInstancesPath + "/messages";
-                    userTodosPath = userInstancesPath + "/todos";
-                    userBackupsPath = userInstancesPath + "/backups";
-                }
                 authStateChanged = true;
                 if (checkTheTime()) {// more than 3 seconds
                     getLocation();
@@ -376,5 +377,5 @@ $(document).ready(function () {
     }
     //#endregion
 
-    console.log("v1.171");
+    console.log("v1.172");
 });
