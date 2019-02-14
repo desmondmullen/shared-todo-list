@@ -20,6 +20,24 @@ var timeCheck;
 var authStateChanged = false;
 var turnedURLToInstancePath; //this is true if moot
 //#endregion
+var userLatitude;
+var userLongitude;
+var initMapLatLong;
+
+function initMap() {
+    setTimeout(function () {
+        console.log("init map: " + userLatitude, userLongitude);
+        initMapLatLong = userLatitude, userLongitude;
+        var userLatLong = { lat: userLatitude, lng: userLongitude };
+        map = new google.maps.Map(document.getElementById("map"), {
+            zoom: 16,
+            center: userLatLong
+        });
+        placeMarker(userLatLong, "You are here");
+        geolocationStatusField.text("Latitude: " + userLatitude + ", Longitude: " + userLongitude);
+
+    }, 500);
+}
 
 $(document).ready(function () {
     var geolocationStatusField = $("#geolocation-status");
@@ -316,9 +334,6 @@ $(document).ready(function () {
     //#endregion
 
     //#region - geolocation
-    var userLatitude;
-    var userLongitude;
-    var initMapLatLong;
     var mapDisplayField = $("#map");
 
     function getLocation() {
@@ -341,21 +356,6 @@ $(document).ready(function () {
         }
     }
 
-    function initMap() {
-        setTimeout(function () {
-            console.log("init map: " + userLatitude, userLongitude);
-            initMapLatLong = userLatitude, userLongitude;
-            var userLatLong = { lat: userLatitude, lng: userLongitude };
-            map = new google.maps.Map(document.getElementById("map"), {
-                zoom: 16,
-                center: userLatLong
-            });
-            placeMarker(userLatLong, "You are here");
-            geolocationStatusField.text("Latitude: " + userLatitude + ", Longitude: " + userLongitude);
-
-        }, 500);
-    }
-
     function placeMarker(theLatLong, title) {
         var marker = new google.maps.Marker({
             position: theLatLong,
@@ -365,5 +365,5 @@ $(document).ready(function () {
     }
     //#endregion
 
-    console.log("v1.175");
+    console.log("v1.1751");
 });
