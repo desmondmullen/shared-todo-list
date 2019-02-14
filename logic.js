@@ -1,27 +1,28 @@
+//#region - initialize firebase and variables
+var config = {
+    apiKey: "AIzaSyBKI_aJkYYr8ikLjgxQa_BCUh2gKCIl-98",
+    authDomain: "dsm-shared-todo-list.firebaseapp.com",
+    databaseURL: "https://dsm-shared-todo-list.firebaseio.com",
+    projectId: "dsm-shared-todo-list",
+    storageBucket: "",
+    messagingSenderId: "288534093673"
+};
+firebase.initializeApp(config);
+var database = firebase.database();
+var userID;
+var userName;
+var userInstancesPath;
+var userBackupsPath;
+var theBackupRetrievalHasBeenDone = false;
+var theCount = 0;
+var map;
+var timeCheck;
+var authStateChanged = false;
+var turnedURLToInstancePath; //this is true if moot
+//#endregion
+
 $(document).ready(function () {
-    //#region - initialize firebase and variables
-    var config = {
-        apiKey: "AIzaSyBKI_aJkYYr8ikLjgxQa_BCUh2gKCIl-98",
-        authDomain: "dsm-shared-todo-list.firebaseapp.com",
-        databaseURL: "https://dsm-shared-todo-list.firebaseio.com",
-        projectId: "dsm-shared-todo-list",
-        storageBucket: "",
-        messagingSenderId: "288534093673"
-    };
-    firebase.initializeApp(config);
-    var database = firebase.database();
-    var userID;
-    var userName;
-    var userInstancesPath;
-    var userBackupsPath;
-    var theBackupRetrievalHasBeenDone = false;
-    var theCount = 0;
     var geolocationStatusField = $("#geolocation-status");
-    var map;
-    var timeCheck;
-    var authStateChanged = false;
-    var turnedURLToInstancePath; //this is true if moot
-    //#endregion
 
     //#region - buttons
     $("#add-entry").on("click", function (event) {
@@ -53,14 +54,15 @@ $(document).ready(function () {
     });
 
     $("body").delegate(".btn-delete", "click", function (event) {
-        console.log("here");
-        let theName = event.target.id;
-        let theIdToDelete = theName.slice((theName.indexOf("-") + 1));
-        let theDeleteString = "#task-" + theIdToDelete
-        console.log(theDeleteString, theCount);
-        $(theDeleteString).remove();
-        theDeleteString = "#hr-" + theIdToDelete
-        $(theDeleteString).remove();
+        if (confirm("Are you sure you want to delete this note?")) {
+            let theName = event.target.id;
+            let theIdToDelete = theName.slice((theName.indexOf("-") + 1));
+            let theDeleteString = "#task-" + theIdToDelete
+            console.log(theDeleteString, theCount);
+            $(theDeleteString).remove();
+            theDeleteString = "#hr-" + theIdToDelete
+            $(theDeleteString).remove();
+        };
     });
 
     $("body").delegate(".btn-add-note", "click", function (event) {
@@ -68,7 +70,7 @@ $(document).ready(function () {
             let theName = event.target.id;
             let theIdToAddNote = theName.slice((theName.indexOf("-") + 1));
             let theAddNoteString = "#notes-" + theIdToAddNote
-            $(theAddNoteString).append($("<div>").addClass("monospace").text($("#input-message").val().trim()));
+            $(theAddNoteString).append($("<div>").addClass("monospace section-notes").text($("#input-message").val().trim()));
             writeTodosFieldBackup();
             $("#input-message").val("");
         };
@@ -83,13 +85,6 @@ $(document).ready(function () {
         console.log("do add entry:" + automatic + ", userID is: " + userID);
         if (automatic != "connected" && automatic != "disconnected") {
             var entryMessage = $("#input-message").val().trim() + "<br>";
-            // } else { //maybe uid to firebase and keep track of logged in?
-            //     if (automatic == "connected") {
-            //         var entryMessage = "[connected]<br>";
-            //     } else {
-            //         var entryMessage = "[disconnected]<br>";
-            //     };
-            // };
             $("#message-display").prepend(todaysDate + " " + currentTime + " <strong>" + userName + "</strong>: <span class=\"monospace\">" + entryMessage + "</span>");
             theLastMessage = todaysDate + " " + currentTime + entryMessage;
             writeEntriesFieldBackup();
@@ -111,7 +106,7 @@ $(document).ready(function () {
         let todaysDate = new Date().toLocaleDateString("en-US");
         let currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         console.log("do add todo. userID is: " + userID);
-        var todoMessage = "<section id=\"task-" + theCount + "\" class=\"section-todo\">" + todaysDate + ": " + $("#input-message").val().trim() + "<section id=\"notes-" + theCount + "\"></section><button id=\"btnaddnote-" + theCount + "\" class=\"btn-add-note\">add note</button><button id=\"btndelete-" + theCount + "\" class=\"btn-delete\">delete</button></section><hr id=\"hr-" + theCount + "\">";
+        var todoMessage = "<section id=\"task-" + theCount + "\" class=\"section-todo\">" + todaysDate + ": " + $("#input-message").val().trim() + "<button id=\"btndelete-" + theCount + "\" class=\"btn-delete\">delete</button><button id=\"btnaddnote-" + theCount + "\" class=\"btn-add-note\">add note</button><section id=\"notes-" + theCount + "\" class=\"section-notes\"></section></section><hr id=\"hr-" + theCount + "\" class=\"hr-todo\">";
         database.ref(userBackupsPath).update({
             theCount: theCount,
         });
@@ -149,7 +144,6 @@ $(document).ready(function () {
     //#region - listeners
     database.ref(userBackupsPath).on("value", function (snapshot) {
         console.log("backups value change - retrieval done: " + theBackupRetrievalHasBeenDone + ". path: " + userBackupsPath);
-        // if (!theBackupRetrievalHasBeenDone && authStateChanged) {
         console.log("doing backup retrieval: " + userBackupsPath);
         var theEntriesBackup = snapshot.child(userBackupsPath + "/entriesFieldContents/").val();
         var theTodosBackup = snapshot.child(userBackupsPath + "/todosFieldContents/").val();
@@ -176,9 +170,6 @@ $(document).ready(function () {
             theConnection.onDisconnect().remove();
         };
     });
-    // connectionsRef.on("value", function (connectionsSnapshot) {
-    //     console.log("number online: " + connectionsSnapshot.numChildren());
-    // }); // Number of online users is the number of objects in the presence list.
 
     firebase.auth().signInAnonymously().catch(function (error) {
         console.log("sign in anonymously");
@@ -189,9 +180,6 @@ $(document).ready(function () {
     });
 
     function turnURLIntoUserInstancesPath(theLink) {
-        // console.log("old path: " + decodeURIComponent(userInstancesPath));
-        // console.log("turn URL: " + theLink);
-        // let theInstancesPath = (theLink.substring((theLink.indexOf("?") + 1), theLink.indexOf("&")));
         if (theLink == null || theLink == "" || theLink == undefined) {
             theLink = window.location.href;
         }
@@ -377,5 +365,5 @@ $(document).ready(function () {
     }
     //#endregion
 
-    console.log("v1.173");
+    console.log("v1.175");
 });

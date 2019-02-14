@@ -12,6 +12,14 @@ p {
     margin-left: 15%;
 }
 
+hr {
+    display: block;
+    width: 100%;
+    margin-left: 0;
+    margin: 5px;
+    border-top: 1px solid black;
+}
+
 #input-message, #input-test {
     display: block;
     text-align: left;
@@ -70,11 +78,6 @@ label {
     margin: 5px;
 }
 
-hr {
-    margin: 5px;
-    border-top: 1px solid black;
-}
-
 #geolocation-status {
     position: fixed;
     bottom: 0;
@@ -127,24 +130,31 @@ hr {
 #tasks {}
 
 .section-todo {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
+    float: left;
     width: 100%;
+}
+
+.section-notes {
+    /* display: inline; */
+    /* float: left; */
+    /* width: 20%; */
+}
+
+.hr-todo {
+    clear: both;
+    width: 100%;
+}
+
+.btn-add-note {
+    float: right;
+}
+
+.btn-delete {
+    float: right;
 }
 
 .section-todo button {
     margin: 5px 0 0 0;
-}
-
-.btn-add-note {
-    align-self: flex-end;
-}
-
-hr {
-    display: block;
-    width: 100%;
-    margin-left: 0;
 }
 
 #map {
@@ -234,6 +244,7 @@ hr {
         padding: 0;
         left: 0;
         font-size: x-small;
+        text-align: center;
     }
     .copyright {
         position: relative;
