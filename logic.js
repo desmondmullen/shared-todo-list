@@ -316,6 +316,7 @@ $(document).ready(function () {
 
     //#region - initialize database
     function initializeDatabaseReferences() {
+        let localStorageUIPath = window.localStorage.getItem("userInstancesPath");
         userName = window.localStorage.getItem("userName");
         timeCheck = window.localStorage.getItem("timeCheck");
         firebase.auth().onAuthStateChanged(function (user) {
@@ -326,9 +327,15 @@ $(document).ready(function () {
                     console.log("UIP before: " + userInstancesPath);
                     turnURLIntoUserInstancesPath(window.location.href);
                     console.log("UIP after: " + userInstancesPath);
-                    // location = location;
+                    window.localStorage.setItem("userInstancesPath", userInstancesPath);
                 } else {
-                    userInstancesPath = "users/" + userID + "/instances/" + (+new Date());
+                    if (localStorageUIPath != null) {
+                        userInstancesPath = localStorageUIPath;
+                    } else {
+                        userInstancesPath = "users/" + userID + "/instances/" + (+new Date());
+                        window.localStorage.setItem("userInstancesPath", userInstancesPath);
+
+                    }
                     userMessagesPath = userInstancesPath + "/messages";
                     userTodosPath = userInstancesPath + "/todos";
                     userBackupsPath = userInstancesPath + "/backups";
@@ -411,5 +418,5 @@ $(document).ready(function () {
     }
     //#endregion
 
-    console.log("v1.1792");
+    console.log("v1.1795");
 });
