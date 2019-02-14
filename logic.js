@@ -38,6 +38,13 @@ function initMap() {
 
     }, 500);
 }
+function placeMarker(theLatLong, title) {
+    var marker = new google.maps.Marker({
+        position: theLatLong,
+        map: map,
+        title: title
+    });
+}
 
 $(document).ready(function () {
     var geolocationStatusField = $("#geolocation-status");
@@ -355,15 +362,7 @@ $(document).ready(function () {
             initMap();
         }
     }
-
-    function placeMarker(theLatLong, title) {
-        var marker = new google.maps.Marker({
-            position: theLatLong,
-            map: map,
-            title: title
-        });
-    }
     //#endregion
 
-    console.log("v1.1751");
+    console.log("v1.177");
 });
