@@ -19,25 +19,28 @@ var map;
 var timeCheck;
 var authStateChanged = false;
 var turnedURLToInstancePath; //this is true if moot
-//#endregion
 var userLatitude;
 var userLongitude;
 var initMapLatLong;
+//#endregion
 
 function initMap() {
-    setTimeout(function () {
-        console.log("init map: " + userLatitude, userLongitude);
-        initMapLatLong = userLatitude, userLongitude;
-        var userLatLong = { lat: userLatitude, lng: userLongitude };
-        map = new google.maps.Map(document.getElementById("map"), {
-            zoom: 16,
-            center: userLatLong
-        });
-        placeMarker(userLatLong, "You are here");
-        geolocationStatusField.text("Latitude: " + userLatitude + ", Longitude: " + userLongitude);
+    if (userLatitude != undefined && userLongitude != undefined) {
+        setTimeout(function () {
+            console.log("init map: " + userLatitude, userLongitude);
+            initMapLatLong = userLatitude, userLongitude;
+            var userLatLong = { lat: userLatitude, lng: userLongitude };
+            map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 16,
+                center: userLatLong
+            });
+            placeMarker(userLatLong, "You are here");
+            geolocationStatusField.text("Latitude: " + userLatitude + ", Longitude: " + userLongitude);
 
-    }, 500);
-}
+        }, 500);
+    };
+};
+
 function placeMarker(theLatLong, title) {
     var marker = new google.maps.Marker({
         position: theLatLong,
@@ -47,6 +50,7 @@ function placeMarker(theLatLong, title) {
 }
 
 $(document).ready(function () {
+    console.log("document ready");
     var geolocationStatusField = $("#geolocation-status");
 
     //#region - buttons
@@ -341,8 +345,6 @@ $(document).ready(function () {
     //#endregion
 
     //#region - geolocation
-    var mapDisplayField = $("#map");
-
     function getLocation() {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(showPosition);
@@ -364,5 +366,5 @@ $(document).ready(function () {
     }
     //#endregion
 
-    console.log("v1.177");
+    console.log("v1.1771");
 });
