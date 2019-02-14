@@ -40,6 +40,8 @@ function initMap() {
             placeMarker(userLatLong, "You are here");
             if (geolocationStatusField != undefined && userLocationPath != undefined) {
                 geolocationStatusField.text("Latitude: " + userLatitude + ", Longitude: " + userLongitude);
+                let todaysDate = new Date().toLocaleDateString("en-US");
+                let currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 database.ref(userLocationPath).set({
                     dateTime: todaysDate + " " + currentTime,
                     userName: userName,
@@ -130,6 +132,8 @@ $(document).ready(function () {
             writeEntriesFieldBackup();
             $("#input-message").val("");
         };
+        let todaysDate = new Date().toLocaleDateString("en-US");
+        let currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         database.ref(userLocationPath).set({
             dateTime: todaysDate + " " + currentTime,
             userName: userName,
@@ -407,5 +411,5 @@ $(document).ready(function () {
     }
     //#endregion
 
-    console.log("v1.1791");
+    console.log("v1.1792");
 });
