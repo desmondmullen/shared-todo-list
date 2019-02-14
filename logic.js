@@ -265,7 +265,7 @@ $(document).ready(function () {
                     console.log("UIP before: " + userInstancesPath);
                     turnURLIntoUserInstancesPath(window.location.href);
                     console.log("UIP after: " + userInstancesPath);
-                    location = location;
+                    // location = location;
                 } else {
                     userInstancesPath = "users/" + userID + "/instances/" + (+new Date());
                     userMessagesPath = userInstancesPath + "/messages";
@@ -377,5 +377,5 @@ $(document).ready(function () {
     }
     //#endregion
 
-    console.log("v1.172");
+    console.log("v1.173");
 });
